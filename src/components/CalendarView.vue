@@ -123,6 +123,7 @@ function goToToday() {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(6, 1fr);
+  grid-gap: 1px; /* iOS 12.1+ Fallback */
   gap: 1px;
   flex: 1;
   overflow: hidden;

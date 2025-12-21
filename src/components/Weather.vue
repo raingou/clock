@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { LucideIcon, Sun, Cloud, CloudRain, CloudSnow, CloudLightning } from 'lucide-vue-next';
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning } from 'lucide-vue-next';
 import { mapWmoCode, weatherIcons } from '../utils/weather';
 import type { WeatherInfo } from '../types';
 
@@ -84,29 +84,29 @@ onUnmounted(() => {
     :class="{ 'opacity-30': loading, 'opacity-100': !loading }"
   >
     <!-- 状态与定位 -->
-    <div class="flex items-center justify-center md:justify-start gap-5">
-      <div id="weather-icon" class="w-16 h-16 float-anim text-white/90">
+    <div class="flex items-center justify-center md:justify-start gap-6">
+      <div id="weather-icon" class="w-24 h-24 float-anim text-white/90">
         <component :is="iconMap[weatherIcons[weatherInfo.type]]" class="w-full h-full" />
       </div>
       <div>
-        <p id="weather-text" class="text-2xl font-semibold tracking-wide">{{ weatherInfo.text }}</p>
-        <p id="location-text" class="text-xs opacity-40 uppercase tracking-widest mt-1">{{ locationText }}</p>
+        <p id="weather-text" class="text-4xl font-semibold tracking-wide">{{ weatherInfo.text }}</p>
+        <p id="location-text" class="text-md opacity-40 uppercase tracking-widest mt-1">{{ locationText }}</p>
       </div>
     </div>
 
     <!-- 温度显示（含最高/最低） -->
     <div class="flex items-center justify-center border-x border-white/5 px-6 gap-6">
       <div class="flex items-end">
-        <div class="text-7xl font-extralight mr-1" id="temp-val">
+        <div class="text-8xl font-extralight mr-1" id="temp-val">
           {{ weatherData ? Math.round(weatherData.current_weather.temperature) : '--' }}
         </div>
-        <div class="text-2xl font-light opacity-70 mb-8">°C</div>
+        <div class="text-3xl font-light opacity-70 mb-12">°C</div>
       </div>
       <div class="flex flex-col items-center justify-between gap-2">
-        <span id="temp-max" class="text-xl font-medium text-red-200">
+        <span id="temp-max" class="text-3xl font-medium text-red-200">
           {{ weatherData ? Math.round(weatherData.daily.temperature_2m_max[0]) : '--' }}°
         </span>
-        <span id="temp-min" class="text-xl font-medium text-blue-200">
+        <span id="temp-min" class="text-3xl font-medium text-blue-200">
           {{ weatherData ? Math.round(weatherData.daily.temperature_2m_min[0]) : '--' }}°
         </span>
       </div>
@@ -115,16 +115,16 @@ onUnmounted(() => {
     <!-- 环境数据 -->
     <div class="flex flex-col justify-center items-center md:items-end">
       <p class="text-lg font-medium tracking-tight">
-        <span id="humidity-val" class="text-white text-2xl">
+        <span id="humidity-val" class="text-white text-4xl">
           {{ weatherData ? weatherData.hourly.relativehumidity_2m[0] : '--' }}%
         </span> 
         <span class="opacity-50 tracking-widest">湿度</span>
       </p>
       <p class="text-lg font-medium tracking-tight mt-1">
-        <span id="wind-val" class="text-white text-2xl">
-          {{ weatherData ? weatherData.current_weather.windspeed : '--' }}
+        <span id="wind-val" class="text-white text-4xl">
+          {{ weatherData ? weatherData.current_weather.windspeed : '--' }} km/h
         </span> 
-        <span class="opacity-50 tracking-widest"> km/h 风速</span>
+        <span class="opacity-50 tracking-widest"> 风速</span>
       </p>
     </div>
   </div>

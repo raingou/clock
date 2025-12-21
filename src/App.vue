@@ -28,6 +28,11 @@ function resetAutoReturnTimer() {
 function goToPage(page: number) {
   currentPage.value = page;
   resetAutoReturnTimer();
+  
+  // 切换到智能首页 (page 0) 时更新状态
+  if (page === 0 && smartHomeRef.value) {
+    smartHomeRef.value.updateAllStates();
+  }
 }
 
 function handleTouchStart(e: TouchEvent) {
@@ -88,7 +93,7 @@ onUnmounted(() => {
 
     <!-- Main Slider -->
     <div 
-      class="main-slider flex h-full transition-transform duration-700 cubic-bezier(0.23, 1, 0.32, 1)"
+      class="main-slider flex h-full transition-transform duration-700 cubic-bezier"
       :style="{ transform: `translateX(-${currentPage * 100}vw)`, width: '300vw' }"
     >
       <div class="slide-page w-[100vw] h-full flex items-center justify-center flex-shrink-0">
@@ -103,7 +108,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Navigation Dots -->
-    <div class="nav-dots absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-50">
+    <!-- <div class="nav-dots absolute bottom-10 left-0 right-0 flex justify-center gap-3 z-50">
       <div 
         v-for="i in [0, 1, 2]" 
         :key="i"
@@ -111,7 +116,7 @@ onUnmounted(() => {
         :class="currentPage === i ? 'bg-white/80 scale-125' : 'bg-white/20'"
         @click="goToPage(i)"
       ></div>
-    </div>
+    </div> -->
 
     <!-- Settings Modal -->
     <SettingsModal 

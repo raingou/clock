@@ -1,56 +1,58 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, nextTick } from 'vue';
 
 const props = defineProps<{
   value: number;
+  trigger?: any; // 新增 trigger 属性，用于强制刷新倾斜度
 }>();
 
-const prevValue = ref(props.value);
-const wrapperStyle = ref({
-  transform: `translateY(-${props.value * 1.1}em)`,
-  transition: 'transform 0.8s cubic-bezier(0, -0.6, 0.32, 1.6)'
-});
-
-const containerRotate = ref(`rotate(${(Math.random() * 8 - 4).toFixed(1)}deg)`);
+// 内部状态，用于追踪当前的显示位置
+const currentIndex = ref(props.value);
+const isTransitioning = ref(true);
 
 const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+const containerRotate = ref(`rotate(${(Math.random() * 12 - 6).toFixed(1)}deg)`);
 
-watch(() => props.value, (newVal) => {
-  if (prevValue.value === 9 && newVal === 0) {
-    // 9 -> 0 special case: scroll to the 11th digit (index 10)
-    wrapperStyle.value = {
-      ...wrapperStyle.value,
-      transform: `translateY(-11em)`
-    };
+// 监听 trigger 变化，每次时间跳动都强制刷新所有数字的角度
+watch(() => props.trigger, () => {
+  containerRotate.value = `rotate(${(Math.random() * 12 - 6).toFixed(1)}deg)`;
+});
+
+watch(() => props.value, (newVal, oldVal) => {
+  // 当数值本身变化时，也会触发角度更新（作为双重保险）
+  containerRotate.value = `rotate(${(Math.random() * 12 - 6).toFixed(1)}deg)`;
+
+  if (oldVal === 9 && newVal === 0) {
+    // 9 -> 0 特殊逻辑：滚动到第 11 个元素 (索引 10)
+    isTransitioning.value = true;
+    currentIndex.value = 10;
     
+    // 动画结束后 (0.8s)，静默跳回索引 0
     setTimeout(() => {
-      wrapperStyle.value = {
-        ...wrapperStyle.value,
-        transition: 'none',
-        transform: `translateY(0)`
-      };
-      // Force reflow
-      void document.body.offsetHeight;
-      wrapperStyle.value = {
-        ...wrapperStyle.value,
-        transition: 'transform 0.8s cubic-bezier(0, -0.6, 0.32, 1.6)'
-      };
+      isTransitioning.value = false;
+      currentIndex.value = 0;
     }, 800);
   } else {
-    wrapperStyle.value = {
-      ...wrapperStyle.value,
-      transform: `translateY(-${newVal * 1.1}em)`
-    };
+    // 正常切换
+    isTransitioning.value = true;
+    currentIndex.value = newVal;
   }
-  
-  containerRotate.value = `rotate(${(Math.random() * 10 - 5).toFixed(1)}deg)`;
-  prevValue.value = newVal;
+});
+
+onMounted(() => {
+  currentIndex.value = props.value;
 });
 </script>
 
 <template>
   <div class="digit-container" :style="{ transform: containerRotate }">
-    <div class="digit-wrapper" :style="wrapperStyle">
+    <div 
+      class="digit-wrapper" 
+      :style="{ 
+        transform: `translateY(-${currentIndex * 1}em)`,
+        transition: isTransitioning ? 'transform 0.8s cubic-bezier(0, -0.6, 0.32, 1.6)' : 'none'
+      }"
+    >
       <div v-for="(digit, index) in digits" :key="index" class="digit-item">
         {{ digit }}
       </div>
@@ -61,27 +63,26 @@ watch(() => props.value, (newVal) => {
 <style scoped>
 .digit-container {
   position: relative;
-  height: 1.1em;
+  display: inline-block;
+  height: 1em;
+  width: 0.8em;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 0.62em;
   opacity: 0.85;
-  mix-blend-mode: plus-lighter;
-  margin: 0 -0.01em;
-  transition: transform 0.8s cubic-bezier(0, -0.6, 0.32, 1.6);
+  margin: 0 -0.12em;
+  vertical-align: middle;
+  /* 为倾斜（transform）增加平滑过渡动画 */
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .digit-wrapper {
-  display: flex;
-  flex-direction: column;
+  display: block;
+  width: 100%;
 }
 
 .digit-item {
-  height: 1.1em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  height: 1em;
+  line-height: 1em;
+  text-align: center;
 }
 </style>

@@ -11,42 +11,42 @@ function toggleSeconds() {
 </script>
 
 <template>
-  <div class="glass-panel p-8 md:p-14 flex flex-col items-center text-white w-full">
+  <div class="glass-panel p-4 md:p-8 flex flex-col items-center text-white w-full">
     <!-- 日期与农历 -->
-    <div class="flex flex-col md:flex-row items-center gap-6 mb-10 w-full justify-center">
+    <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-4 w-full justify-center">
       <div class="flex items-center gap-4">
         <div class="date-day-big text-glow">{{ now.getDate() }}</div>
-        <div class="flex flex-col">
-          <span class="text-3xl tracking-[0.2em] opacity-90 uppercase">
+        <div class="flex flex-col mt-2">
+          <span class="text-5xl tracking-[0.2em] opacity-90 uppercase">
             {{ now.toLocaleDateString('zh-CN', { weekday: 'long' }) }}
           </span>
-          <span class="text-2xl tracking-[0.2em] font-light opacity-70">
+          <span class="text-4xl tracking-[0.2em] font-light opacity-70 mt-1">
             {{ now.getFullYear() }}年{{ now.getMonth() + 1 }}月
           </span>
         </div>
       </div>
-      <div class="hidden md:block w-px h-12 bg-white/10 mx-4"></div>
-      <div class="flex flex-col items-center md:items-start">
-        <span class="text-3xl font-medium text-white/90 tracking-wider">{{ lunar.fullDate }}</span>
-        <span class="text-2xl tracking-[0.2em] font-light opacity-70">农历 {{ lunar.year }}</span>
+      <div class="hidden md:block w-px h-16 bg-white/10 mx-8 self-center"></div>
+      <div class="flex flex-col items-center md:items-start mt-5">
+        <span class="text-5xl font-medium text-white/90 tracking-wider">{{ lunar.fullDate }}</span>
+        <span class="text-4xl tracking-[0.2em] font-light opacity-70 mt-2">{{ lunar.year }}</span>
       </div>
     </div>
 
     <!-- 时钟显示 -->
     <div 
-      class="clock-display text-glow tabular-nums mb-12 cursor-pointer transition-all duration-500" 
+      class="clock-display text-glow tabular-nums mb-4 cursor-pointer transition-all duration-500" 
       :class="{ 'with-seconds': showSeconds }"
       @click="toggleSeconds"
     >
-      <Digit :value="h1" />
-      <Digit :value="h2" />
+      <Digit :value="h1" :trigger="showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)" />
+      <Digit :value="h2" :trigger="showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)" />
       <div class="clock-separator">:</div>
-      <Digit :value="m1" />
-      <Digit :value="m2" />
+      <Digit :value="m1" :trigger="showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)" />
+      <Digit :value="m2" :trigger="showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)" />
       <div v-if="showSeconds" class="seconds-container flex items-center">
         <div class="clock-separator">:</div>
-        <Digit :value="s1" />
-        <Digit :value="s2" />
+        <Digit :value="s1" :trigger="now.getTime()" />
+        <Digit :value="s2" :trigger="now.getTime()" />
       </div>
     </div>
 
@@ -57,13 +57,11 @@ function toggleSeconds() {
 
 <style scoped>
 .glass-panel {
-  max-width: 1000px;
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  max-width: 1200px;
 }
 
 .date-day-big {
-  font-size: clamp(4rem, 8vw, 8rem);
+  font-size: 8rem; /* iOS 12 Fallback: 约 80px */
   line-height: 1;
   font-weight: 800;
   background: linear-gradient(to bottom, #ffffff, #666666);
@@ -73,21 +71,27 @@ function toggleSeconds() {
 
 .clock-display {
   display: flex;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   align-items: center;
   justify-content: center;
-  font-size: clamp(7rem, 25vw, 18rem);
+  font-family:  'Huninn', sans-serif;
+  font-size: 35vw; /* iOS 12 Fallback 1: 响应式比例 */
+  font-size: 22rem; /* iOS 12 Fallback 2: 强制大字号 */
+  font-size: clamp(10rem, 35vw, 25rem);
   font-weight: 1000;
-  letter-spacing: -0.02em;
-  line-height: 1;
+  letter-spacing: -0.05em; /* 增加负间距 */
+  line-height: 1.1;
+  -webkit-text-stroke: 2px white; /* 恢复适中的描边加粗 */
 }
 
 .clock-display.with-seconds {
-  font-size: clamp(4rem, 15vw, 10rem);
+  font-size: 28vw; /* iOS 12 Fallback 1 */
 }
 
 .clock-separator {
   opacity: 0.6;
-  margin: 0 0.05em;
+  margin: 0 -0.1em; /* 进一步减少冒号间距 */
   font-weight: 700;
 }
 
