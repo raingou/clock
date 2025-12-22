@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning } from 'lucide-vue-next';
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Droplets, Wind } from 'lucide-vue-next';
 import { mapWmoCode, weatherIcons } from '../utils/weather';
 import type { WeatherInfo } from '../types';
 
@@ -132,19 +132,19 @@ onUnmounted(() => {
     </div>
 
     <!-- 环境数据 -->
-    <div class="flex flex-col justify-center items-center md:items-end">
-      <p class="text-lg font-medium tracking-tight">
-        <span id="humidity-val" class="text-white text-4xl">
+    <div class="flex flex-col justify-center items-center md:items-end gap-3">
+      <div class="flex items-center gap-3">
+        <span id="humidity-val" class="text-white text-4xl tabular-nums">
           {{ weatherData ? weatherData.hourly.relativehumidity_2m[0] : '--' }}%
         </span> 
-        <span class="opacity-50 tracking-widest">湿度</span>
-      </p>
-      <p class="text-lg font-medium tracking-tight mt-1">
-        <span id="wind-val" class="text-white text-4xl">
-          {{ weatherData ? weatherData.current_weather.windspeed : '--' }} km/h
+        <Droplets class="w-8 h-8 text-blue-400 opacity-80" />
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="wind-val" class="text-white text-4xl tabular-nums">
+          {{ weatherData ? weatherData.current_weather.windspeed : '--' }}km/h
         </span> 
-        <span class="opacity-50 tracking-widest"> 风速</span>
-      </p>
+        <Wind class="w-8 h-8 text-slate-400 opacity-80" />
+      </div>
     </div>
   </div>
 </template>
