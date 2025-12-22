@@ -109,7 +109,10 @@ onUnmounted(() => {
       </div>
       <div>
         <p id="weather-text" class="text-4xl font-semibold tracking-wide">{{ weatherInfo.text }}</p>
-        <p id="location-text" class="text-md opacity-40 uppercase tracking-widest mt-1">{{ locationText }}</p>
+        <p id="location-text" class="text-md text-white/60 uppercase tracking-widest mt-1">
+          {{ locationText }} · 
+          降雨 <span class="text-blue-400 text-xl tabular-nums">{{ weatherData ? weatherData.daily.precipitation_probability_max[0] : '--' }}%</span> 
+        </p>
       </div>
     </div>
 
@@ -132,28 +135,24 @@ onUnmounted(() => {
     </div>
 
     <!-- 环境数据 -->
-    <div class="flex flex-col justify-center items-center md:items-end gap-3">
+    <div class="flex flex-col justify-center items-center md:items-end gap-3 text-white text-3xl tabular-nums">
       <div class="flex items-center gap-3">
-        <span id="humidity-val" class="text-white text-4xl tabular-nums">
+        <span id="humidity-val">
           {{ weatherData ? weatherData.hourly.relativehumidity_2m[0] : '--' }}%
         </span> 
-        <Droplets class="w-8 h-8 text-blue-400 opacity-80" />
+        <Droplets class="w-8 h-8 text-blue-500/60" />
       </div>
       <div class="flex items-center gap-3">
-        <span id="uv-val" class="text-white text-4xl tabular-nums">
+        <span id="apparent-temp-val">
+          {{ weatherData ? Math.round(weatherData.hourly.apparent_temperature[0]) : '--' }}°C
+        </span> 
+        <Thermometer class="w-8 h-8 text-orange-500/60" />
+        <span id="uv-val">
           {{ weatherData ? Math.round(weatherData.daily.uv_index_max[0]) : '--' }}
         </span> 
-        <Zap class="w-8 h-8 text-yellow-400 opacity-80" />
+        <Zap class="w-8 h-8 text-yellow-500/60" />
       </div>
     </div>
-
-    <!-- 追加行：更多详细指标 -->
-     <div class="text-white/60 col-span-full text-center mt-4">
-      今日降雨概率 <span class="text-blue-400 text-xl tabular-nums">{{ weatherData ? weatherData.daily.precipitation_probability_max[0] : '--' }}%</span> ·
-      体感温度 <span class="text-orange-400 text-xl tabular-nums">{{ weatherData ? Math.round(weatherData.hourly.apparent_temperature[0]) : '--' }}°C</span> ·
-      风速 <span class="text-slate-400 text-xl tabular-nums">{{ weatherData ? weatherData.current_weather.windspeed : '--' }} km/h</span> ·
-      能见度 <span class="text-emerald-400 text-xl tabular-nums">{{ weatherData ? (weatherData.hourly.visibility[0] / 1000).toFixed(1) : '--' }} km</span>
-     </div>
   </div>
 </template>
 
