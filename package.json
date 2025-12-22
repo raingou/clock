@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "release": "standard-version"
+    "release": "standard-version && git push --follow-tags"
   },
   "dependencies": {
     "@fontsource/cherry-bomb-one": "^5.0.0",
