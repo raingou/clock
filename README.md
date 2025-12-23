@@ -1,10 +1,10 @@
-# Clock Dashboard | 精美天气时钟看板
+# Clock Dashboard | 天气时钟看板
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Vue](https://img.shields.io/badge/vue-3.4-brightgreen.svg)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/vite-5.0-blueviolet.svg)](https://vitejs.dev/)
 
-一个基于 Vue 3 + TypeScript + Vite + Tailwind CSS 构建的精美天气时钟看板。
+一个基于 Vue 3 + TypeScript + Vite + Tailwind CSS 构建的天气时钟看板。
 将废弃iPad变为时钟看板，支持天气、农历、日历、Home Assistant 智能设备控制（通过左右滑动切换页面）。
 
 ---
@@ -12,7 +12,7 @@
 ## 🌟 特性
 
 - **动态数字时钟**：支持滚动动画和随机倾斜效果，模拟手写/艺术字感。
-- **实时天气**：基于地理位置或 IP 自动获取天气、温度、湿度及风速。
+- **实时天气**：基于[Open-Meteo](https://open-meteo.com/)，根据地理位置或 IP 自动获取天气、温度、湿度。
 - **农历信息**：集成 `lunar-typescript`，提供精准的农历、干支年及节日显示。
 - **全屏日历**：内置万年历视图，支持月份切换及今天快速跳转。
 - **智能家居控制**：深度集成 Home Assistant，支持灯光、开关、窗帘电机（Cover）等设备的实时控制与状态同步。
