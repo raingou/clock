@@ -25,14 +25,6 @@ body {
   text-shadow: 0 0 45px var(--accent-glow);
 }
 
-/* iOS 12 backdrop-filter 前缀 */
-.backdrop-blur-md,
-.backdrop-blur-3xl,
-.glass-panel {
-  /* -webkit-backdrop-filter: blur(20px); */
-  /* backdrop-filter: blur(20px); */
-}
-
 /* --- iOS 12 兼容性补丁 (不再依赖 @supports) --- */
 
 /* 1. Flex 间距修复 - 为所有使用的 gap 增加 margin */
@@ -138,20 +130,6 @@ body {
   .grid.gap-10 > * {
     margin: 0 !important;
   }
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
 }
 
 @keyframes float {
