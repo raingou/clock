@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/teojs/clock-dashboard/compare/v1.6.3...v1.7.0) (2025-12-24)
+
+
+### Features
+
+* **weather:** add weather icons and update weather data fetching logic ([5f280f9](https://github.com/teojs/clock-dashboard/commit/5f280f9437325910adbfe25d8d1f864f6572b1a5))
+
 ### [1.6.3](https://github.com/teojs/clock-dashboard/compare/v1.6.2...v1.6.3) (2025-12-24)
 
 
