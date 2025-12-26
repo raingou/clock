@@ -2,10 +2,13 @@
 import type { HAConfig } from '../types'
 import { Blinds, Droplets, Fan, Lightbulb, LightbulbOff, Loader2, Power, RotateCw, Settings, Snowflake, Thermometer, Tv, Zap } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useConfigStore } from '../stores/config'
 
 const emit = defineEmits(['openSettings'])
 
-const haConfig = ref<HAConfig>(JSON.parse(localStorage.getItem('ha_config') || '{"url":"","token":"","entities":[]}'))
+const configStore = useConfigStore()
+const { haConfig } = storeToRefs(configStore)
 const entitiesStates = ref<Record<string, any>>({})
 const loadingStates = ref<Record<string, boolean>>({})
 const isRefreshing = ref(false)
@@ -74,11 +77,6 @@ async function fetchEntityState(entityId: string) {
 
 async function updateAllStates() {
   isRefreshing.value = true
-  // 重新从本地存储读取配置，确保获取最新添加的设备
-  const savedConfig = localStorage.getItem('ha_config')
-  if (savedConfig) {
-    haConfig.value = JSON.parse(savedConfig)
-  }
 
   if (!haConfig.value.url || !haConfig.value.token) {
     isRefreshing.value = false

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useWeather } from '../composables/useWeather'
+import { storeToRefs } from 'pinia'
+import { useWeatherStore } from '../stores/weather'
 
+const weatherStore = useWeatherStore()
 const {
   weatherData,
   showRainEffect,
   showThunderEffect,
   showSnowEffect,
-} = useWeather()
+} = storeToRefs(weatherStore)
 
 // WMO codes:
 // Rain: 51-55 (drizzle), 61-67 (rain), 80-82 (showers), 95-99 (thunderstorm)

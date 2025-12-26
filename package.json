@@ -17,6 +17,8 @@
     "clsx": "^2.1.0",
     "lucide-vue-next": "^0.300.0",
     "lunar-typescript": "^1.7.5",
+    "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "tailwind-merge": "^2.2.0",
     "vue": "^3.4.0"
   },

@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { Droplets, PersonStanding, Zap } from 'lucide-vue-next'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import { useWeather } from '../composables/useWeather'
+import { storeToRefs } from 'pinia'
+import { useWeatherStore } from '../stores/weather'
 import WeatherSettingsModal from './WeatherSettingsModal.vue'
 
-const { weatherData, loading, locationText, weatherInfo, refreshInterval, getLocationAndWeather } = useWeather()
+const weatherStore = useWeatherStore()
+const { weatherData, loading, locationText, weatherInfo, refreshInterval } = storeToRefs(weatherStore)
 
 const showSettings = ref(false)
 let weatherTimer: number
 
 function setupTimer() {
   if (weatherTimer) clearInterval(weatherTimer)
-  weatherTimer = window.setInterval(getLocationAndWeather, refreshInterval.value * 60 * 1000)
+  weatherTimer = window.setInterval(weatherStore.updateWeather, refreshInterval.value * 60 * 1000)
 }
 
 watch(refreshInterval, () => {
@@ -19,7 +21,7 @@ watch(refreshInterval, () => {
 })
 
 onMounted(() => {
-  getLocationAndWeather()
+  weatherStore.updateWeather()
   setupTimer()
 })
 

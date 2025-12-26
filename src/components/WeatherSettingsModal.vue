@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { RefreshCw, Save, X } from 'lucide-vue-next'
+import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
-import { useWeather } from '../composables/useWeather'
+import { useWeatherStore } from '../stores/weather'
 
 const props = defineProps<{
   show: boolean
@@ -9,68 +10,60 @@ const props = defineProps<{
 
 const emit = defineEmits(['close'])
 
-const {
-  locationMode,
-  customLat,
-  customLon,
-  customCity,
-  refreshInterval,
-  showRainEffect,
-  showThunderEffect,
-  showSnowEffect,
-  saveSettings,
-  getLocationAndWeather,
-  loading,
-} = useWeather()
+const weatherStore = useWeatherStore()
+const { loading } = storeToRefs(weatherStore)
 
 const draft = ref({
-  locationMode: locationMode.value,
-  customLat: customLat.value,
-  customLon: customLon.value,
-  customCity: customCity.value,
-  refreshInterval: refreshInterval.value,
-  showRainEffect: showRainEffect.value,
-  showThunderEffect: showThunderEffect.value,
-  showSnowEffect: showSnowEffect.value,
+  locationMode: weatherStore.locationMode,
+  customLat: weatherStore.customLat,
+  customLon: weatherStore.customLon,
+  customCity: weatherStore.customCity,
+  refreshInterval: weatherStore.refreshInterval,
+  showRainEffect: weatherStore.showRainEffect,
+  showThunderEffect: weatherStore.showThunderEffect,
+  showSnowEffect: weatherStore.showSnowEffect,
 })
 
 watch(() => props.show, (isShowing) => {
   if (isShowing) {
     draft.value = {
-      locationMode: locationMode.value,
-      customLat: customLat.value,
-      customLon: customLon.value,
-      customCity: customCity.value,
-      refreshInterval: refreshInterval.value,
-      showRainEffect: showRainEffect.value,
-      showThunderEffect: showThunderEffect.value,
-      showSnowEffect: showSnowEffect.value,
+      locationMode: weatherStore.locationMode,
+      customLat: weatherStore.customLat,
+      customLon: weatherStore.customLon,
+      customCity: weatherStore.customCity,
+      refreshInterval: weatherStore.refreshInterval,
+      showRainEffect: weatherStore.showRainEffect,
+      showThunderEffect: weatherStore.showThunderEffect,
+      showSnowEffect: weatherStore.showSnowEffect,
     }
   }
 })
 
 function handleSaveAndClose() {
-  locationMode.value = draft.value.locationMode
-  customLat.value = draft.value.customLat
-  customLon.value = draft.value.customLon
-  customCity.value = draft.value.customCity
-  refreshInterval.value = draft.value.refreshInterval
-  showRainEffect.value = draft.value.showRainEffect
-  showThunderEffect.value = draft.value.showThunderEffect
-  showSnowEffect.value = draft.value.showSnowEffect
+  weatherStore.$patch({
+    locationMode: draft.value.locationMode,
+    customLat: draft.value.customLat,
+    customLon: draft.value.customLon,
+    customCity: draft.value.customCity,
+    refreshInterval: draft.value.refreshInterval,
+    showRainEffect: draft.value.showRainEffect,
+    showThunderEffect: draft.value.showThunderEffect,
+    showSnowEffect: draft.value.showSnowEffect,
+  })
 
-  saveSettings()
   emit('close')
-  getLocationAndWeather()
+  weatherStore.updateWeather()
 }
 
 async function handleManualRefresh() {
-  locationMode.value = draft.value.locationMode
-  customLat.value = draft.value.customLat
-  customLon.value = draft.value.customLon
-  customCity.value = draft.value.customCity
+  weatherStore.$patch({
+    locationMode: draft.value.locationMode,
+    customLat: draft.value.customLat,
+    customLon: draft.value.customLon,
+    customCity: draft.value.customCity,
+  })
 
-  await getLocationAndWeather()
+  await weatherStore.updateWeather()
 }
 </script>
 

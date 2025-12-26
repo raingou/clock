@@ -2,6 +2,7 @@
 import type { HAConfig } from '../types'
 import { ChevronDown, ChevronUp, Code, List, PlusCircle, Trash2, X } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
+import { useConfigStore } from '../stores/config'
 
 const props = defineProps<{
   show: boolean
@@ -10,9 +11,17 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'saved'])
 
-const config = ref<HAConfig>(JSON.parse(localStorage.getItem('ha_config') || '{"url":"","token":"","entities":[]}'))
+const configStore = useConfigStore()
+const config = ref<HAConfig>(JSON.parse(JSON.stringify(configStore.haConfig)))
 const isJsonMode = ref(false)
 const jsonInput = ref('')
+
+// 弹窗打开时同步最新状态
+watch(() => props.show, (isShowing) => {
+  if (isShowing) {
+    config.value = JSON.parse(JSON.stringify(configStore.haConfig))
+  }
+})
 
 // 切换模式时同步数据
 watch(isJsonMode, (newVal) => {
@@ -80,7 +89,7 @@ function save() {
       return
     }
   }
-  localStorage.setItem('ha_config', JSON.stringify(config.value))
+  configStore.haConfig = JSON.parse(JSON.stringify(config.value))
   emit('saved')
   emit('close')
 }
