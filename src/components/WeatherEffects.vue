@@ -6,6 +6,7 @@ const { weatherData } = useWeather()
 
 // WMO codes:
 // Rain: 51-55 (drizzle), 61-67 (rain), 80-82 (showers), 95-99 (thunderstorm)
+// Snow: 71-77 (snowfall), 85-86 (snow showers)
 // Thunder: 95, 96, 99
 
 const weatherCode = computed(() => weatherData.value?.current?.weather_code ?? -1)
@@ -15,18 +16,30 @@ const isRaining = computed(() => {
   return (code >= 51 && code <= 67) || (code >= 80 && code <= 82) || (code >= 95 && code <= 99)
 })
 
+const isSnowing = computed(() => {
+  const code = weatherCode.value
+  return (code >= 71 && code <= 77) || (code === 85 || code === 86)
+})
+
 const isThundering = computed(() => {
   const code = weatherCode.value
   return code === 95 || code === 96 || code === 99
 })
 
-// Rain density based on code
+// Particle density based on code
 const rainCount = computed(() => {
   const code = weatherCode.value
   if (code === 65 || code === 82 || code === 99) return 150 // Heavy
   if (code === 63 || code === 81 || code === 96) return 100 // Moderate
   if (code >= 51 && code <= 55) return 40 // Drizzle
   return 80 // Default rain
+})
+
+const snowCount = computed(() => {
+  const code = weatherCode.value
+  if (code === 75 || code === 86) return 100 // Heavy
+  if (code === 73) return 60 // Moderate
+  return 30 // Light/Default
 })
 
 const showFlash = ref(false)
@@ -47,26 +60,52 @@ interface Drop {
 }
 let drops: Drop[] = []
 
+// Snow state
+interface Snowflake {
+  x: number
+  y: number
+  r: number // radius
+  v: number // velocity
+  w: number // wobble (horizontal movement)
+  o: number // offset for wobble
+}
+let snowflakes: Snowflake[] = []
+
 function initCanvas() {
   if (!canvasRef.value) return
   const canvas = canvasRef.value
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
 
-  // 根据雨量动态计算速度基准
-  // rainCount 越大（雨越重），速度越快
-  const count = rainCount.value
-  const baseSpeed = count <= 40 ? 5 : count <= 100 ? 7 : 10
+  // Init Rain
+  if (isRaining.value) {
+    const count = rainCount.value
+    const baseSpeed = count <= 40 ? 5 : count <= 100 ? 7 : 10
+    drops = []
+    for (let i = 0; i < count; i++) {
+      drops.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        l: 20 + Math.random() * 15,
+        v: baseSpeed + Math.random() * baseSpeed,
+      })
+    }
+  }
 
-  // Initialize drops
-  drops = []
-  for (let i = 0; i < count; i++) {
-    drops.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      l: 20 + Math.random() * 15,
-      v: baseSpeed + Math.random() * baseSpeed, // 速度范围在 [base, base*2] 之间
-    })
+  // Init Snow
+  if (isSnowing.value) {
+    const count = snowCount.value
+    snowflakes = []
+    for (let i = 0; i < count; i++) {
+      snowflakes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: 2 + Math.random() * 3,
+        v: 1 + Math.random() * 2,
+        w: 0.5 + Math.random() * 1,
+        o: Math.random() * Math.PI * 2,
+      })
+    }
   }
 }
 
@@ -182,13 +221,30 @@ function render() {
     }
   }
 
+  // 3. 绘制雪花
+  if (isSnowing.value) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+    for (let i = 0; i < snowflakes.length; i++) {
+      const s = snowflakes[i]
+      ctx.beginPath()
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
+      ctx.fill()
+
+      s.y += s.v
+      s.x += Math.sin(s.o + s.y / 50) * s.w
+
+      if (s.y > canvas.height) {
+        s.y = -s.r
+        s.x = Math.random() * canvas.width
+      }
+    }
+  }
+
   animationId = requestAnimationFrame(render)
 }
 
-watch([isRaining, rainCount], ([raining]) => {
-  if (raining) {
-    initCanvas()
-  }
+watch([isRaining, rainCount, isSnowing, snowCount], () => {
+  initCanvas()
 })
 
 function triggerFlash() {
