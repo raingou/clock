@@ -3,14 +3,15 @@ import { Blinds, Droplets, Fan, Lightbulb, LightbulbOff, Loader2, Power, RotateC
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useConfigStore } from '../stores/config'
-
-const emit = defineEmits(['openSettings'])
+import SmartSettingsModal from './SmartSettingsModal.vue'
 
 const configStore = useConfigStore()
 const { haConfig } = storeToRefs(configStore)
+
 const entitiesStates = ref<Record<string, any>>({})
 const loadingStates = ref<Record<string, boolean>>({})
 const isRefreshing = ref(false)
+const showSettings = ref(false)
 
 // 计算要在顶部标题显示的温湿度信息（取第一个空调设备的数据）
 const headerClimateInfo = computed(() => {
@@ -156,7 +157,7 @@ defineExpose({ updateAllStates, entitiesStates })
         >
           <RotateCw class="w-6 h-6" :class="{ 'animate-spin': isRefreshing }" />
         </button>
-        <button class="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all" @click="emit('openSettings')">
+        <button class="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all" @click="showSettings = true">
           <Settings class="w-6 h-6" />
         </button>
       </div>
@@ -211,6 +212,16 @@ defineExpose({ updateAllStates, entitiesStates })
     <div v-else class="col-span-full text-center py-20 opacity-50">
       <p>请点击右上角设置 Home Assistant 地址和令牌</p>
     </div>
+
+    <!-- Smart Home Settings Modal -->
+    <Teleport to="body">
+      <SmartSettingsModal
+        :show="showSettings"
+        :entities-states="entitiesStates"
+        @close="showSettings = false"
+        @saved="updateAllStates"
+      />
+    </Teleport>
   </div>
 </template>
 

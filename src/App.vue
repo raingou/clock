@@ -4,13 +4,11 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import CalendarView from './components/CalendarView.vue'
 import ClockWeather from './components/ClockWeather.vue'
 import NewYearEgg from './components/NewYearEgg.vue'
-import SettingsModal from './components/SettingsModal.vue'
 import SmartHome from './components/SmartHome.vue'
 import WeatherEffects from './components/WeatherEffects.vue'
 import { useWeatherStore } from './stores/weather'
 
 const currentPage = ref(1)
-const showSettings = ref(false)
 const smartHomeRef = ref<any>(null)
 const calendarRef = ref<any>(null)
 
@@ -103,11 +101,6 @@ function handleMouseUp(e: MouseEvent) {
   }
 }
 
-function onSettingsSaved() {
-  if (smartHomeRef.value) {
-    smartHomeRef.value.updateAllStates()
-  }
-}
 
 onMounted(() => {
   window.addEventListener('keydown', resetAutoReturnTimer)
@@ -135,7 +128,7 @@ onUnmounted(() => {
       :style="{ transform: `translateX(-${currentPage * 100}vw)`, width: '300vw' }"
     >
       <div class="slide-page w-screen h-screen flex items-center justify-center flex-shrink-0">
-        <SmartHome ref="smartHomeRef" @open-settings="showSettings = true" />
+        <SmartHome ref="smartHomeRef" />
       </div>
       <div class="slide-page w-screen h-screen flex items-center justify-center flex-shrink-0">
         <ClockWeather />
@@ -149,14 +142,6 @@ onUnmounted(() => {
     <NewYearEgg />
 
     <WeatherEffects v-if="shouldShowWeatherEffects" />
-
-    <!-- Settings Modal -->
-    <SettingsModal
-      :show="showSettings"
-      :entities-states="smartHomeRef?.entitiesStates || {}"
-      @close="showSettings = false"
-      @saved="onSettingsSaved"
-    />
   </div>
 </template>
 

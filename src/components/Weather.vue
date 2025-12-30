@@ -95,10 +95,12 @@ onUnmounted(() => {
   </div>
 
   <!-- 天气设置弹窗 -->
-  <WeatherSettingsModal
-    :show="showSettings"
-    @close="showSettings = false"
-  />
+  <Teleport to="body">
+    <WeatherSettingsModal
+      :show="showSettings"
+      @close="showSettings = false"
+    />
+  </Teleport>
 </template>
 
 <style scoped>
