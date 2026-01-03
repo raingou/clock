@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/teojs/clock-dashboard/compare/v1.14.1...v1.15.0) (2026-01-03)
+
+
+### Features
+
+* add air quality data fetching and display in Weather component ([d20200b](https://github.com/teojs/clock-dashboard/commit/d20200b573acd9b908c23a5df3233098e403a464))
+* enhance useTime hook to track last update date for lunar information updates ([f4626e4](https://github.com/teojs/clock-dashboard/commit/f4626e4334ead4f0c639bbd24416401466cadabc))
+
+
+### Bug Fixes
+
+* handle potential null values in air quality data display in Weather component ([88d607c](https://github.com/teojs/clock-dashboard/commit/88d607c77e1a6534f9ac305cdccb645a4fcebe73))
+
 ### [1.14.1](https://github.com/teojs/clock-dashboard/compare/v1.14.0...v1.14.1) (2025-12-31)
 
 
