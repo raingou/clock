@@ -36,7 +36,7 @@ onUnmounted(() => {
 <template>
   <div
     id="weather-container"
-    class="weather-clickable grid grid-cols-1 md:grid-cols-3 gap-3 w-full pt-10 transition-opacity duration-700"
+    class="weather-clickable grid grid-cols-1 md:grid-cols-3 gap-3 w-full transition-opacity duration-700"
     :class="{ 'opacity-30': loading, 'opacity-100': !loading }"
     @click="showSettings = true"
   >
@@ -134,7 +134,7 @@ onUnmounted(() => {
   transition:
     transform 0.2s ease,
     opacity 0.5s ease;
-  padding: 1rem;
+  padding: 0 1.5rem;
 }
 .weather-clickable:active {
   transform: scale(0.98);
