@@ -11,8 +11,7 @@
 
 预览地址：[https://teojs.github.io/clock-dashboard/](https://teojs.github.io/clock-dashboard/)
 
-![时钟页面](./docs/4.gif)
-
+![时钟页面](./public/screenshots/4.gif)
 
 ---
 
@@ -49,15 +48,15 @@
 
 ### 1. 时钟页面
 
-![时钟页面](./docs/1.png)
+![时钟页面](./public/screenshots/1.png)
 
 ### 2. 智能家居控制
 
-![智能控制](./docs/0.png)
+![智能控制](./public/screenshots/0.png)
 
 ### 3. 全屏日历
 
-![日历视图](./docs/2.png)
+![日历视图](./public/screenshots/2.png)
 
 ---
 
