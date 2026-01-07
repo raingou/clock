@@ -11,11 +11,21 @@
 
 预览地址：[https://teojs.github.io/clock-dashboard/](https://teojs.github.io/clock-dashboard/)
 
+> 本项目为纯前端项目，所用到的所有接口均为直连，不存在隐私泄露风险，
+> 直接访问[预览地址](https://teojs.github.io/clock-dashboard/)也可以安全使用Home Assistant，无需私有部署。
+> 第三方接口以及HA接口都是https请求，所以自部署需要通过https访问。
+
+-
+
 ![时钟页面](./public/screenshots/4.gif)
 
 ---
 
 ## 更新日志
+
+- 2026-01-07 （[v1.16.0](https://github.com/teojs/clock-dashboard/releases/tag/v1.16.0)）
+  - 支持自定义时钟颜色；
+  - 支持12小时制；
 
 - 2026-01-03 （[v1.15.0](https://github.com/teojs/clock-dashboard/releases/tag/v1.15.0)）
   - 新增空气指数指标；
@@ -31,18 +41,19 @@
 
 ## 🌟 特性
 
-- **动态数字时钟**：支持滚动动画和随机倾斜效果，模拟手写/艺术字感，点击可切换秒数显示。
+- **动态数字时钟**：滚动动画和随机倾斜效果，使用了[SF Pro Rounded](https://developer.apple.com/fonts/)字体。
 - **实时天气**：基于[Open-Meteo](https://open-meteo.com/)，根据地理位置或 IP 自动获取天气、温度、湿度。
 
   天气右边4个指标是：湿度、空气指数（US AQI）、体感温度、紫外线指数。
 
   点击底部天气区域可以进行设置。
 
-- **农历信息**：集成 `lunar-typescript`，提供精准的农历、干支年及节日显示。
+- **农历信息**：集成 [lunar-typescript](https://github.com/6tail/lunar-typescript)，提供精准的农历、干支年及节日显示。
 - **全屏日历**：内置万年历视图，支持月份切换及今天快速跳转。
 - **智能家居控制**：深度集成 Home Assistant，支持灯光、开关、窗帘电机（Cover）等设备的实时控制与状态同步。
 - **PWA 支持**：支持 iOS "添加到主屏幕"，全屏沉浸式体验，无地址栏。
 - **JSON 配置**：智能设备支持一键 JSON 导入/导出，方便跨设备同步配置。
+- **本地配置缓存**：所有配置数据都存储在本地，不会上传到服务器。
 
 ## 📸 预览
 
@@ -182,10 +193,6 @@ http:
   ]
 }
 ```
-
-## ⚠️ 注意事项
-
-第三方接口以及HA接口都是https请求，所以自部署需要通过https访问。
 
 ## 📄 开源协议
 
