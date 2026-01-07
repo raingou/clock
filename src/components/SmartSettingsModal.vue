@@ -129,6 +129,12 @@ function save() {
         </div>
       </div>
 
+      <div class="mb-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl">
+        <p class="text-xs text-orange-200/60 leading-relaxed">
+          <strong>💡 跨域提示：</strong> 如果接口无法加载，请确保在 Home Assistant 的 <code>configuration.yaml</code> 中配置了 <code>cors_allowed_origins</code>，包含当前看板的访问域名或 IP。
+        </p>
+      </div>
+
       <div class="space-y-6 flex-1">
         <div v-if="!isJsonMode" class="space-y-6 overflow-y-auto max-h-[55vh] border border-white/10 rounded-2xl p-3">
           <div>
@@ -194,13 +200,7 @@ function save() {
             placeholder="{&quot;url&quot;: &quot;http://...&quot;, &quot;token&quot;: &quot;...&quot;, &quot;entities&quot;: [{&quot;id&quot;: &quot;light.living_room&quot;, &quot;name&quot;: &quot;客厅灯&quot;}]}"
           />
           <div class="flex justify-between items-center text-[10px] opacity-30 px-1">
-            <span>支持地址、令牌、设备列表全量导入导出</span>
             <span>格式: { "url": "...", "token": "...", "entities": [...] }</span>
-          </div>
-          <div class="mt-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl">
-            <p class="text-xs text-orange-200/60 leading-relaxed">
-              <strong>💡 跨域提示：</strong> 如果接口无法加载，请确保在 Home Assistant 的 <code>configuration.yaml</code> 中配置了 <code>cors_allowed_origins</code>，包含当前看板的访问域名或 IP。
-            </p>
           </div>
         </div>
       </div>
