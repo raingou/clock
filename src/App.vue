@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { useIdle, useMagicKeys } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import NewYearEgg from './components/NewYearEgg.vue'
 import WeatherEffects from './components/WeatherEffects.vue'
-import { useWeatherStore } from './stores/weather'
 
+import { useWeatherStore } from './stores/weather'
 import CalendarView from './views/CalendarView.vue'
 import ClockWeatherView from './views/ClockWeatherView.vue'
 import SmartHomeView from './views/SmartHomeView.vue'
@@ -42,24 +43,9 @@ const shouldShowWeatherEffects = computed(() => {
 })
 
 let startX = 0
-let autoReturnTimer: number | null = null
-
-function resetAutoReturnTimer() {
-  if (autoReturnTimer) {
-    clearTimeout(autoReturnTimer)
-    autoReturnTimer = null
-  }
-
-  if (currentPage.value !== 1) {
-    autoReturnTimer = window.setTimeout(() => {
-      goToPage(1)
-    }, 30000) // 30 seconds
-  }
-}
 
 function goToPage(page: number) {
   currentPage.value = page
-  resetAutoReturnTimer()
 
   // 切换到日历看板 (page 2) 时更新当前日期
   if (page === 2 && calendarRef.value) {
@@ -69,7 +55,6 @@ function goToPage(page: number) {
 
 function handleTouchStart(e: TouchEvent) {
   startX = e.touches[0].clientX
-  resetAutoReturnTimer()
 }
 
 function handleTouchEnd(e: TouchEvent) {
@@ -90,7 +75,6 @@ function handleTouchEnd(e: TouchEvent) {
 
 function handleMouseDown(e: MouseEvent) {
   startX = e.clientX
-  resetAutoReturnTimer()
 }
 
 function handleMouseUp(e: MouseEvent) {
@@ -115,16 +99,21 @@ function handleGlobalClick(e: MouseEvent) {
   }
 }
 
-onMounted(() => {
-  window.addEventListener('keydown', resetAutoReturnTimer)
-  window.addEventListener('click', resetAutoReturnTimer)
+const { idle } = useIdle(30 * 1000) // 30 秒不操作自动返回首页
+watch(idle, (newIdle) => {
+  if (newIdle) {
+    goToPage(1)
+  }
 })
 
-onUnmounted(() => {
-  window.removeEventListener('keydown', resetAutoReturnTimer)
-  window.removeEventListener('click', resetAutoReturnTimer)
-  if (autoReturnTimer)
-    clearTimeout(autoReturnTimer)
+const { left, right } = useMagicKeys()
+watchEffect(() => {
+  if (left.value && currentPage.value > 0) {
+    goToPage(currentPage.value - 1)
+  }
+  if (right.value && currentPage.value < 2) {
+    goToPage(currentPage.value + 1)
+  }
 })
 </script>
 

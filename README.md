@@ -27,17 +27,9 @@
 
 ![时钟页面](./public/screenshots/4.gif)
 
-### 时钟页面
-
-![时钟页面](./public/screenshots/1.png)
-
-### 智能家居控制
-
-![智能控制](./public/screenshots/0.png)
-
-### 全屏日历
-
-![日历视图](./public/screenshots/2.png)
+|                时钟页面                 |                智能控制                 |                全屏日历                 |
+| :-------------------------------------: | :-------------------------------------: | :-------------------------------------: |
+| ![时钟页面](./public/screenshots/1.png) | ![智能控制](./public/screenshots/0.png) | ![全屏日历](./public/screenshots/2.png) |
 
 ---
 

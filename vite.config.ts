@@ -20,7 +20,7 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
         id: 'clock-dashboard',
-        name: '天气时钟看板',
+        name: '天气时钟',
         short_name: '天气时钟',
         description: '基于 Vue 3 的天气时钟看板',
         theme_color: '#000000',
@@ -37,12 +37,6 @@ export default defineConfig({
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
           },
         ],
         screenshots: [
@@ -62,8 +56,8 @@ export default defineConfig({
     }),
   ],
   server: {
-    host: true, // 监听所有地址，包括局域网
-    port: 3000, // 端口修改为 3000
+    host: true,
+    port: 3000,
   },
   build: {
     minify: 'terser',
