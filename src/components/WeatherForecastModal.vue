@@ -125,165 +125,141 @@ function handleOverlayClick(e: MouseEvent) {
 </script>
 
 <template>
-  <Transition name="modal">
+  <div
+    v-if="show"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+    @click.stop.prevent="handleOverlayClick"
+    @mousedown.stop
+    @mouseup.stop
+    @touchstart.stop
+    @touchend.stop
+  >
     <div
-      v-if="show"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
-      @click.stop.prevent="handleOverlayClick"
-      @mousedown.stop
-      @mouseup.stop
-      @touchstart.stop
-      @touchend.stop
+      class="max-h-[80vh] flex flex-col relative bg-neutral-950 rounded-3xl max-w-2xl w-full mx-4 border border-white/20"
     >
-      <div
-        class="max-h-[80vh] flex flex-col relative bg-neutral-950 rounded-3xl max-w-2xl w-full mx-4 border border-white/20"
-      >
-        <div class="absolute inset-20 bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
+      <div class="absolute inset-20 bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
 
-        <!-- 标题 -->
-        <div class="px-8 pt-8 pb-6 flex items-center justify-between gap-4">
-          <h2 class="text-3xl font-bold text-white flex items-center gap-2">
-            <span>5日天气预报</span>
-            <span class="text-white/40">·</span>
-            <span class="text-white/60 text-2xl">{{ locationText }}</span>
-          </h2>
-          <div class="flex items-center gap-2">
-            <button
-              class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300"
-              @click="openSettings"
-            >
-              <Settings class="w-5 h-5 text-white" />
-            </button>
-            <button
-              class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300"
-              :class="{ 'opacity-60 pointer-events-none': loading }"
-              :disabled="loading"
-              @click="refreshForecast"
-            >
-              <RefreshCw class="w-5 h-5 text-white" :class="{ 'animate-spin': loading }" />
-            </button>
+      <!-- 标题 -->
+      <div class="px-8 pt-8 pb-6 flex items-center justify-between gap-4">
+        <h2 class="text-3xl font-bold text-white flex items-center gap-2">
+          <span>5日天气预报</span>
+          <span class="text-white/40">·</span>
+          <span class="text-white/60 text-2xl">{{ locationText }}</span>
+        </h2>
+        <div class="flex items-center gap-2">
+          <button
+            class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300"
+            @click="openSettings"
+          >
+            <Settings class="w-5 h-5 text-white" />
+          </button>
+          <button
+            class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300"
+            :class="{ 'opacity-60 pointer-events-none': loading }"
+            :disabled="loading"
+            @click="refreshForecast"
+          >
+            <RefreshCw class="w-5 h-5 text-white" :class="{ 'animate-spin': loading }" />
+          </button>
+        </div>
+      </div>
+
+      <!-- 天气列表 -->
+      <div class="px-8 pb-8 overflow-y-auto">
+        <!-- 骨架屏 -->
+        <div v-if="isLoading" class="space-y-3">
+          <div
+            v-for="i in 5"
+            :key="`skeleton-${i}`"
+            class="flex items-center justify-between gap-6 py-2 px-6 rounded-2xl bg-white/5"
+          >
+            <!-- 左侧骨架 -->
+            <div class="flex items-center gap-4 flex-1">
+              <!-- 日期骨架 -->
+              <div class="flex flex-col gap-2 min-w-[70px]">
+                <div class="h-6 w-16 bg-white/10 rounded animate-pulse" />
+                <div class="h-4 w-12 bg-white/10 rounded animate-pulse" />
+              </div>
+
+              <!-- 天气图标和描述骨架 -->
+              <div class="flex flex-col gap-2 flex-1">
+                <div class="flex items-center gap-3">
+                  <div class="w-16 h-16 bg-white/10 rounded-full animate-pulse flex-shrink-0" />
+                  <div class="flex flex-col gap-2 flex-1">
+                    <div class="h-5 w-20 bg-white/10 rounded animate-pulse" />
+                    <div class="h-4 w-24 bg-white/10 rounded animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧温度骨架 -->
+            <div class="flex items-center gap-3 min-w-[240px]">
+              <div class="h-5 w-10 bg-white/10 rounded animate-pulse" />
+              <div class="flex-1 h-2 bg-white/10 rounded-full animate-pulse" />
+              <div class="h-5 w-10 bg-white/10 rounded animate-pulse" />
+            </div>
           </div>
         </div>
 
-        <!-- 天气列表 -->
-        <div class="px-8 pb-8 overflow-y-auto">
-          <!-- 骨架屏 -->
-          <div v-if="isLoading" class="space-y-3">
-            <div
-              v-for="i in 5"
-              :key="`skeleton-${i}`"
-              class="flex items-center justify-between gap-6 py-2 px-6 rounded-2xl bg-white/5"
-            >
-              <!-- 左侧骨架 -->
-              <div class="flex items-center gap-4 flex-1">
-                <!-- 日期骨架 -->
-                <div class="flex flex-col gap-2 min-w-[70px]">
-                  <div class="h-6 w-16 bg-white/10 rounded animate-pulse" />
-                  <div class="h-4 w-12 bg-white/10 rounded animate-pulse" />
-                </div>
-
-                <!-- 天气图标和描述骨架 -->
-                <div class="flex flex-col gap-2 flex-1">
-                  <div class="flex items-center gap-3">
-                    <div class="w-16 h-16 bg-white/10 rounded-full animate-pulse flex-shrink-0" />
-                    <div class="flex flex-col gap-2 flex-1">
-                      <div class="h-5 w-20 bg-white/10 rounded animate-pulse" />
-                      <div class="h-4 w-24 bg-white/10 rounded animate-pulse" />
-                    </div>
-                  </div>
-                </div>
+        <!-- 实际数据 -->
+        <div v-else class="space-y-3">
+          <div
+            v-for="(day, index) in forecastDays"
+            :key="index"
+            class="flex items-center justify-between gap-6 py-2 px-6 rounded-2xl bg-white/5"
+          >
+            <!-- 左侧：日期、天气、降雨 -->
+            <div class="flex items-center gap-4 flex-1">
+              <!-- 日期 -->
+              <div class="flex flex-col items-start min-w-[70px]">
+                <span class="text-xl font-semibold text-white">{{ day.dayName }}</span>
+                <span class="text-sm text-white/60">{{ day.dateText }}</span>
               </div>
 
-              <!-- 右侧温度骨架 -->
-              <div class="flex items-center gap-3 min-w-[240px]">
-                <div class="h-5 w-10 bg-white/10 rounded animate-pulse" />
-                <div class="flex-1 h-2 bg-white/10 rounded-full animate-pulse" />
-                <div class="h-5 w-10 bg-white/10 rounded animate-pulse" />
+              <!-- 天气图标和描述 -->
+              <div class="flex flex-col gap-2 flex-1">
+                <div class="flex items-center gap-3">
+                  <img
+                    :src="day.weatherInfo.icon"
+                    :alt="day.weatherInfo.text"
+                    class="w-16 h-16 object-contain flex-shrink-0"
+                    draggable="false"
+                  >
+                  <div class="flex flex-col">
+                    <span class="text-lg text-white/90">{{ day.weatherInfo.text }}</span>
+                    <!-- 降雨概率 -->
+                    <span class="text-sm text-blue-400 tabular-nums">降雨 {{ day.precipitationProbability }}%</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- 实际数据 -->
-          <div v-else class="space-y-3">
-            <div
-              v-for="(day, index) in forecastDays"
-              :key="index"
-              class="flex items-center justify-between gap-6 py-2 px-6 rounded-2xl bg-white/5"
-            >
-              <!-- 左侧：日期、天气、降雨 -->
-              <div class="flex items-center gap-4 flex-1">
-                <!-- 日期 -->
-                <div class="flex flex-col items-start min-w-[70px]">
-                  <span class="text-xl font-semibold text-white">{{ day.dayName }}</span>
-                  <span class="text-sm text-white/60">{{ day.dateText }}</span>
-                </div>
+            <!-- 右侧：温度区间条 -->
+            <div class="flex items-center gap-3 min-w-[240px]">
+              <span class="text-lg font-medium text-blue-300 tabular-nums w-10 text-right">{{ day.tempMin }}°</span>
 
-                <!-- 天气图标和描述 -->
-                <div class="flex flex-col gap-2 flex-1">
-                  <div class="flex items-center gap-3">
-                    <img
-                      :src="day.weatherInfo.icon"
-                      :alt="day.weatherInfo.text"
-                      class="w-16 h-16 object-contain flex-shrink-0"
-                      draggable="false"
-                    >
-                    <div class="flex flex-col">
-                      <span class="text-lg text-white/90">{{ day.weatherInfo.text }}</span>
-                      <!-- 降雨概率 -->
-                      <span class="text-sm text-blue-400 tabular-nums">降雨 {{ day.precipitationProbability }}%</span>
-                    </div>
-                  </div>
-                </div>
+              <!-- 温度区间条 -->
+              <div class="relative flex-1 h-2 bg-white/10 rounded-full">
+                <div
+                  class="absolute h-full bg-gradient-to-r from-blue-400 to-orange-400 rounded-full transition-all duration-500"
+                  :style="{
+                    left: `${getTempBarPosition(day.tempMin, day.tempMax).left}%`,
+                    width: `${getTempBarPosition(day.tempMin, day.tempMax).width}%`,
+                  }"
+                />
+                <div
+                  v-if="day.isToday && weatherData?.current?.temperature_2m !== undefined"
+                  class="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+                  :style="{ left: `${getTempDotPosition(weatherData.current.temperature_2m)}%` }"
+                />
               </div>
 
-              <!-- 右侧：温度区间条 -->
-              <div class="flex items-center gap-3 min-w-[240px]">
-                <span class="text-lg font-medium text-blue-300 tabular-nums w-10 text-right">{{ day.tempMin }}°</span>
-
-                <!-- 温度区间条 -->
-                <div class="relative flex-1 h-2 bg-white/10 rounded-full">
-                  <div
-                    class="absolute h-full bg-gradient-to-r from-blue-400 to-orange-400 rounded-full transition-all duration-500"
-                    :style="{
-                      left: `${getTempBarPosition(day.tempMin, day.tempMax).left}%`,
-                      width: `${getTempBarPosition(day.tempMin, day.tempMax).width}%`,
-                    }"
-                  />
-                  <div
-                    v-if="day.isToday && weatherData?.current?.temperature_2m !== undefined"
-                    class="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-                    :style="{ left: `${getTempDotPosition(weatherData.current.temperature_2m)}%` }"
-                  />
-                </div>
-
-                <span class="text-lg font-medium text-orange-400 tabular-nums w-10 text-left">{{ day.tempMax }}°</span>
-              </div>
+              <span class="text-lg font-medium text-orange-400 tabular-nums w-10 text-left">{{ day.tempMax }}°</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </Transition>
+  </div>
 </template>
-
-<style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active > div,
-.modal-leave-active > div {
-  transition: transform 0.3s ease;
-}
-
-.modal-enter-from > div,
-.modal-leave-to > div {
-  transform: scale(0.9);
-}
-</style>
