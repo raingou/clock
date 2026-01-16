@@ -2,7 +2,7 @@
 import type { HAConfig } from '../../types'
 import { ChevronDown, ChevronUp, Code, List, Minus, Plus, PlusCircle } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useConfigStore } from '../../stores/config'
 import { useHAStore } from '../../stores/ha'
 import TestHAConnection from './TestHAConnection.vue'
@@ -15,6 +15,19 @@ const { entitiesStates } = storeToRefs(haStore)
 const smartConfig = ref<HAConfig>(JSON.parse(JSON.stringify(haConfig.value)))
 const isJsonMode = ref(false)
 const jsonInput = ref('')
+const entityNameMap = ref<Record<string, string>>({})
+
+function refreshEntityNameMap() {
+  const nextMap: Record<string, string> = {}
+  const states = entitiesStates.value
+  if (states) {
+    Object.keys(states).forEach((entityId) => {
+      const name = states[entityId]?.attributes?.friendly_name
+      if (name) nextMap[entityId] = name
+    })
+  }
+  entityNameMap.value = nextMap
+}
 
 watch(isJsonMode, (newVal) => {
   if (newVal) {
@@ -83,9 +96,14 @@ function save() {
 
 function reset() {
   smartConfig.value = JSON.parse(JSON.stringify(haConfig.value))
+  refreshEntityNameMap()
 }
 
 defineExpose({ save, reset })
+
+onMounted(() => {
+  refreshEntityNameMap()
+})
 </script>
 
 <template>
@@ -149,7 +167,7 @@ defineExpose({ save, reset })
                 <input
                   v-model="entity.name"
                   type="text"
-                  :placeholder="entitiesStates?.[entity.id]?.attributes?.friendly_name || '备注名（可选）'"
+                  :placeholder="entityNameMap[entity.id] || '备注名（可选）'"
                   class="settings-input py-2.5 !rounded-b-none text-sm"
                 >
                 <input
