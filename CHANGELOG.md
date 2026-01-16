@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.18.0](https://github.com/teojs/clock-dashboard/compare/v1.17.0...v1.18.0) (2026-01-16)
+
+
+### Features
+
+* add @vueuse/core dependency and implement idle detection for automatic page return in App.vue ([871ef19](https://github.com/teojs/clock-dashboard/commit/871ef1968aa4f98257ab07d4da4e6f6b42692dc7))
+* implement daily weather forecast functionality with modal display ([326b1bd](https://github.com/teojs/clock-dashboard/commit/326b1bd194e7a17ea5b7ad0e584cf3f5b1750861))
+* integrate daily weather data into WeatherForecastModal and update API calls for enhanced forecast functionality ([3750b59](https://github.com/teojs/clock-dashboard/commit/3750b5908602612c3b630d0785d7c75398d033d1))
+
+
+### Bug Fixes
+
+* correct conditional rendering for holiday display in AlmanacModal to ensure accurate information presentation ([329a632](https://github.com/teojs/clock-dashboard/commit/329a6326270cef5bdde17c59a686f3c6d34d2665))
+* prevent event propagation on click handlers in Weather and WeatherForecastModal components ([beb75f4](https://github.com/teojs/clock-dashboard/commit/beb75f4ecb7d5c5189be0bade0da6493fb3d908d))
+
 ## [1.17.0](https://github.com/teojs/clock-dashboard/compare/v1.16.3...v1.17.0) (2026-01-11)
 
 
