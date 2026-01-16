@@ -15,7 +15,9 @@
 
 🌟 如果本项目对你有帮助，不妨点点Star，或者[请我喝杯咖啡☕️](#%EF%B8%8F-请我喝杯咖啡)
 
-> ⚠️ 此项目用到 `Vue 3.x` 框架，这意味着最高系统为 iOS 9.3.6 的 iPad mini 1 将无法支持，[只支持原生支持 ES2016 的浏览器](https://caniuse.com/es2016)。
+> ⚠️ 此项目用到 `Vue 3.x` 框架，这意味着最高系统为 iOS9.3.6 的 iPad mini 1 将无法支持，[只支持原生支持 ES2016 的浏览器](https://caniuse.com/es2016)， 目前仅在 iOS12 及更高版本测试通过。
+>
+> 如果您的设备系统为 iOS11 或更低版本，请使用 [https://github.com/teojs/clock-dashboard-vue2](https://github.com/teojs/clock-dashboard-vue2)。
 >
 > 💡 **隐私说明：**
 > 本项目为纯前端项目，所有接口均为直连，不存在隐私泄露风险。
