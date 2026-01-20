@@ -45,7 +45,7 @@ async function testConnection() {
 
 <template>
   <button
-    class="flex items-center gap-2 text-blue-400"
+    class="flex items-center space-x-2 text-blue-400"
     :class="{
       'text-green-400': connectionStatus === 'success',
       'text-red-400': connectionStatus === 'error',

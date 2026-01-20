@@ -24,10 +24,10 @@ defineExpose({ save, reset })
 <template>
   <div class="space-y-10 animate-fade-in">
     <section>
-      <h4 class="text-white/50 mb-4 uppercase tracking-widest text-sm font-medium">
+      <h4 class="text-white/60 mb-4 uppercase tracking-widest text-sm font-medium">
         {{ t('language.label') }} (beta)
       </h4>
-      <div class="grid grid-cols-3 gap-4">
+      <div class="grid grid-cols-3 space-x-3">
         <button
           class="settings-tab-btn"
           :class="{ active: languageDraft === 'zh-CN' }"

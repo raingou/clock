@@ -57,7 +57,7 @@ watch(idle, (newIdle) => {
 
 <template>
   <div
-    class="glass-panel relative h-full flex flex-col items-center justify-evenly text-white w-full overflow-y-auto overflow-x-hidden"
+    class="glass-panel relative h-full flex flex-col items-center justify-center text-white w-full overflow-y-auto overflow-x-hidden"
     @click.stop="showSettingsButton = !showSettingsButton"
   >
     <!-- 设置按钮 -->
@@ -84,10 +84,7 @@ watch(idle, (newIdle) => {
         </div>
         <div v-if="showLunar" class="flex flex-col">
           <div class="lunar-date-label">
-            {{ lunar.date }}
-            <span v-if="lunar.festival">
-              ·{{ lunar.festival }}
-            </span>
+            {{ lunar.date }}<span v-if="lunar.festival">·{{ lunar.festival }}</span>
           </div>
           <span class="lunar-year-label">{{ lunar.year }}({{ lunar.yearShengxiao }})年{{ lunar.month }}月</span>
         </div>
@@ -216,6 +213,8 @@ watch(idle, (newIdle) => {
   justify-content: center;
   font-family: 'SFCompactRounded', 'Huninn', sans-serif;
   font-size: 54vh;
+  margin-top: 6vh;
+  margin-bottom: 6vh;
 }
 
 .clock-display.with-seconds {

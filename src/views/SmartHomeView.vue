@@ -133,25 +133,25 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
 </script>
 
 <template>
-  <div class="glass-panel p-8 md:p-14 flex flex-col items-center text-white h-full justify-start overflow-y-auto w-full">
+  <div class="glass-panel p-8 md:p-12 flex flex-col items-center text-white h-full justify-start overflow-y-auto w-full">
     <div class="flex items-center justify-between w-full mb-10">
-      <div class="flex items-baseline gap-6">
+      <div class="flex items-baseline space-x-6">
         <h2 class="text-4xl font-bold tracking-widest text-nowrap">
           {{ t('smartHome.title') }}
         </h2>
-        <div v-if="headerClimateInfo" class="flex items-center gap-6 opacity-60">
-          <div v-if="headerClimateInfo.temp !== undefined" class="flex items-center gap-2">
+        <div v-if="headerClimateInfo" class="flex items-center space-x-6 opacity-60">
+          <div v-if="headerClimateInfo.temp !== undefined" class="flex items-center space-x-2">
             <Thermometer class="w-5 h-5 text-orange-400" />
             <span class="text-2xl font-medium tabular-nums">{{ headerClimateInfo.temp }}°</span>
           </div>
-          <div v-if="headerClimateInfo.humi !== undefined" class="flex items-center gap-2">
+          <div v-if="headerClimateInfo.humi !== undefined" class="flex items-center space-x-2">
             <Droplets class="w-5 h-5 text-blue-400" />
             <span class="text-2xl font-medium tabular-nums">{{ headerClimateInfo.humi }}%</span>
           </div>
         </div>
       </div>
-      <div class="flex gap-4 items-center">
-        <div v-if="connectErrorText" class="flex items-center gap-2">
+      <div class="flex space-x-4 items-center">
+        <div v-if="connectErrorText" class="flex items-center space-x-2">
           <AlertTriangle class="w-5 h-5 text-red-400" />
           <span class="text-red-400 text-sm">{{ connectErrorText }}</span>
         </div>
@@ -161,7 +161,7 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
       </div>
     </div>
 
-    <div v-if="haConfig.url && haConfig.token" id="ha-entities" class="grid grid-cols-2 md:grid-cols-3 gap-6 w-full">
+    <div v-if="haConfig.url && haConfig.token" id="ha-entities" class="grid grid-cols-2 md:grid-cols-3 w-full">
       <div
         v-for="entity in haConfig.entities"
         :key="entity.id"
@@ -180,13 +180,13 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
           </div>
 
           <!-- 右侧温湿度 (针对空调/climate) -->
-          <div v-if="entity.id.startsWith('climate.') && entitiesStates[entity.id]?.attributes" class="flex gap-4 text-sm font-medium opacity-80">
-            <div v-if="entitiesStates[entity.id].attributes.current_temperature !== undefined" class="flex items-center gap-1.5">
-              <Thermometer class="w-4 h-4 text-orange-400" />
+          <div v-if="entity.id.startsWith('climate.') && entitiesStates[entity.id]?.attributes" class="flex space-x-4 text-sm font-medium opacity-80">
+            <div v-if="entitiesStates[entity.id].attributes.current_temperature !== undefined" class="flex items-center">
+              <Thermometer class="w-4 h-4 text-orange-400 mr-1.5" />
               <span class="text-base">{{ entitiesStates[entity.id].attributes.current_temperature }}°</span>
             </div>
-            <div v-if="entitiesStates[entity.id].attributes.current_humidity !== undefined" class="flex items-center gap-1.5">
-              <Droplets class="w-4 h-4 text-blue-400" />
+            <div v-if="entitiesStates[entity.id].attributes.current_humidity !== undefined" class="flex items-center">
+              <Droplets class="w-4 h-4 text-blue-400 mr-1.5" />
               <span class="text-base">{{ entitiesStates[entity.id].attributes.current_humidity }}%</span>
             </div>
           </div>
@@ -226,6 +226,7 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
+  margin: 0.5rem;
 }
 
 .ha-card.on {

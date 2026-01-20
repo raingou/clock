@@ -56,7 +56,7 @@ const showLunar = computed(() => locale.value !== 'en-US')
 
         <template v-if="showLunar">
           <!-- 农历信息 -->
-          <div class="text-xl flex flex-wrap gap-2">
+          <div class="text-xl flex flex-wrap space-x-2">
             <span>
               {{ lunar.year }}({{ lunar.yearShengxiao }})年 {{ lunar.month }}({{ lunar.monthGanzhi }})月 {{ lunar.date }}({{ lunar.dayGanzhi }})日
             </span>
@@ -74,8 +74,8 @@ const showLunar = computed(() => locale.value !== 'en-US')
               <div class="text-center text-emerald-400 font-bold text-lg border-b border-white/10 bg-white/5 p-2 rounded-tl-2xl">
                 {{ t('almanac.yi') }}
               </div>
-              <div class="flex-1 flex flex-wrap gap-2 p-3">
-                <span v-for="item in lunar.yi" :key="item" class="text-md text-emerald-50/90">{{ item }}</span>
+              <div class="flex-1 flex flex-wrap p-2">
+                <span v-for="item in lunar.yi" :key="item" class="text-md text-emerald-50/90 m-1">{{ item }}</span>
               </div>
             </div>
 
@@ -83,8 +83,8 @@ const showLunar = computed(() => locale.value !== 'en-US')
               <div class="text-center text-red-400 font-bold text-lg border-b border-white/10 bg-white/5 p-2 rounded-tr-2xl">
                 {{ t('almanac.ji') }}
               </div>
-              <div class="flex-1 flex flex-wrap gap-2 p-3">
-                <span v-for="item in lunar.ji" :key="item" class="text-md text-red-50/90">{{ item }}</span>
+              <div class="flex-1 flex flex-wrap p-2">
+                <span v-for="item in lunar.ji" :key="item" class="text-md text-red-50/90 m-1">{{ item }}</span>
               </div>
             </div>
           </div>

@@ -110,16 +110,16 @@ onMounted(() => {
 
 <template>
   <div class="space-y-10 animate-fade-in">
-    <section class="flex flex-col gap-4">
+    <section class="flex flex-col space-y-4">
       <div class="flex items-center justify-between mb-6">
-        <h4 class="text-white/50 uppercase tracking-widest text-sm font-medium">
+        <h4 class="text-white/60 uppercase tracking-widest text-sm font-medium">
           {{ t('smartHomeSettings.baseConfig') }}
         </h4>
         <button
-          class="text-[10px] flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-all"
+          class="text-[10px] flex items-center px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-all"
           @click="isJsonMode = !isJsonMode"
         >
-          <component :is="isJsonMode ? List : Code" class="w-3.5 h-3.5" />
+          <component :is="isJsonMode ? List : Code" class="w-3.5 h-3.5 mr-1.5" />
           {{ isJsonMode ? t('smartHomeSettings.listMode') : t('smartHomeSettings.jsonMode') }}
         </button>
       </div>
@@ -150,13 +150,13 @@ onMounted(() => {
 
         <div class="space-y-4 pt-4">
           <div class="flex items-center justify-between">
-            <h4 class="text-white/50 uppercase tracking-widest text-sm font-medium">
+            <h4 class="text-white/60 uppercase tracking-widest text-sm font-medium">
               {{ t('smartHomeSettings.deviceManagement') }}
             </h4>
             <span class="text-sm text-white/20 font-mono">{{ t('smartHomeSettings.entityCount', { count: smartConfig.entities.length }) }}</span>
           </div>
           <div class="space-y-4">
-            <div v-for="(entity, index) in smartConfig.entities" :key="entity.id || index" class="relative flex gap-2 items-stretch group">
+            <div v-for="(entity, index) in smartConfig.entities" :key="entity.id || index" class="relative flex space-x-2 items-stretch group">
               <div class="flex flex-col justify-between opacity-60 flex-shrink-0 border border-white/10 rounded-2xl px-1 py-1.5 bg-white/5">
                 <button class="bg-white/10 rounded-full p-1 text-white/80 hover:text-white hover:bg-white/20 transition-all" @click="moveEntity(index, -1)">
                   <ChevronUp class="w-4 h-4" />
@@ -181,13 +181,13 @@ onMounted(() => {
               </div>
               <div class="flex flex-col justify-between transition-opacity flex-shrink-0 border border-white/5 rounded-2xl px-1 py-1.5 bg-white/5">
                 <button
-                  class="bg-white/10 rounded-full p-1 text-white/50 transition-all hover:text-white hover:bg-white/20"
+                  class="bg-white/10 rounded-full p-1 text-white/60 transition-all hover:text-white hover:bg-white/20"
                   @click="addEntity(index)"
                 >
                   <Plus class="w-4 h-4" />
                 </button>
                 <button
-                  class="bg-white/10 rounded-full p-1 text-white/50 transition-all hover:text-white hover:bg-white/20"
+                  class="bg-white/10 rounded-full p-1 text-white/60 transition-all hover:text-white hover:bg-white/20"
                   @click="removeEntity(index)"
                 >
                   <Minus class="w-4 h-4" />
@@ -195,9 +195,9 @@ onMounted(() => {
               </div>
             </div>
             <button class="settings-secondary-btn w-full justify-center border-dashed border-white/10 py-3 !mt-6" @click="addEntity()">
-              <span class="flex items-center gap-2">
+              <div class="flex items-center space-x-2 justify-center">
                 <PlusCircle class="w-4 h-4 mr-2" /> {{ t('smartHomeSettings.addDevice') }}
-              </span>
+              </div>
             </button>
           </div>
         </div>
@@ -208,7 +208,7 @@ onMounted(() => {
         v-model="jsonInput"
         :rows="25"
         class="settings-input font-mono text-xs leading-relaxed resize-none p-5"
-        :placeholder="t('smartHomeSettings.jsonPlaceholder')"
+        placeholder="{ &quot;url&quot;: &quot;...&quot;, &quot;token&quot;: &quot;...&quot;, &quot;entities&quot;: [] }"
       />
     </section>
   </div>

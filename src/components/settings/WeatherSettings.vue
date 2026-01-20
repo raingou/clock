@@ -125,10 +125,10 @@ defineExpose({ save, reset })
 <template>
   <div class="space-y-10 animate-fade-in">
     <section>
-      <h4 class="text-white/50 mb-4 uppercase tracking-widest text-sm font-medium">
+      <h4 class="text-white/60 mb-4 uppercase tracking-widest text-sm font-medium">
         {{ t('weatherSettings.locationMode') }}
       </h4>
-      <div class="flex flex-wrap gap-3">
+      <div class="flex flex-wrap space-x-3">
         <button
           v-for="mode in ['auto', 'coords', 'city']"
           :key="mode"
@@ -140,7 +140,7 @@ defineExpose({ save, reset })
         </button>
       </div>
 
-      <div v-if="weatherDraft.locationMode === 'coords'" class="mt-4 grid grid-cols-2 gap-4">
+      <div v-if="weatherDraft.locationMode === 'coords'" class="mt-4 grid grid-cols-2 space-x-4">
         <div class="space-y-2">
           <label class="text-xs text-white/40 block ml-1">{{ t('weatherSettings.longitude') }}</label>
           <input v-model.number="weatherDraft.customLon" type="number" step="0.0001" class="settings-input">
@@ -149,7 +149,7 @@ defineExpose({ save, reset })
           <label class="text-xs text-white/40 block ml-1">{{ t('weatherSettings.latitude') }}</label>
           <input v-model.number="weatherDraft.customLat" type="number" step="0.0001" class="settings-input">
         </div>
-        <div class="space-y-2 text-xs text-white/40 flex items-center col-span-2">
+        <div class="space-y-2 text-xs text-white/40 flex items-center col-span-2 mt-2 !ml-0">
           {{ t('weatherSettings.getCoords') }} :
           <a href="https://lbs.baidu.com/maptool/getpoint" target="_blank" class="text-blue-500 ml-1">https://lbs.baidu.com/maptool/getpoint</a>
         </div>
@@ -192,10 +192,10 @@ defineExpose({ save, reset })
     </section>
 
     <section>
-      <h4 class="text-white/50 mb-4 uppercase tracking-widest text-sm font-medium">
+      <h4 class="text-white/60 mb-4 uppercase tracking-widest text-sm font-medium">
         {{ t('weatherSettings.refreshRate') }}
       </h4>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap space-x-2">
         <button
           v-for="time in [5, 10, 20, 30]"
           :key="time"
@@ -209,7 +209,7 @@ defineExpose({ save, reset })
     </section>
 
     <section>
-      <h4 class="text-white/50 mb-4 uppercase tracking-widest text-sm font-medium">
+      <h4 class="text-white/60 mb-4 uppercase tracking-widest text-sm font-medium">
         {{ t('weatherSettings.effects') }}
       </h4>
       <div class="space-y-4">
@@ -247,23 +247,23 @@ defineExpose({ save, reset })
     </section>
 
     <section>
-      <h4 class="text-white/50 uppercase tracking-widest text-sm font-medium mb-4">
+      <h4 class="text-white/60 uppercase tracking-widest text-sm font-medium mb-4">
         {{ t('weatherSettings.iconLegend') }}
       </h4>
-      <div class="flex flex-wrap bg-white/5 rounded-2xl p-4">
-        <div class="flex items-center gap-3 flex-1 whitespace-nowrap m-2">
+      <div class="grid grid-cols-2 bg-white/5 rounded-2xl p-4">
+        <div class="flex items-center space-x-3 flex-1 whitespace-nowrap p-2">
           <Droplets class="w-5 h-5 text-blue-500/60 flex-shrink-0" />
           <span class="text-sm text-white/80">{{ t('weatherSettings.humidity') }}</span>
         </div>
-        <div class="flex items-center gap-3 flex-1 whitespace-nowrap m-2">
+        <div class="flex items-center space-x-3 flex-1 whitespace-nowrap p-2">
           <Leaf class="w-5 h-5 text-green-300/60 flex-shrink-0" />
           <span class="text-sm text-white/80">{{ t('weatherSettings.airQuality') }}</span>
         </div>
-        <div class="flex items-center gap-3 flex-1 whitespace-nowrap m-2">
+        <div class="flex items-center space-x-3 flex-1 whitespace-nowrap p-2">
           <PersonStanding class="w-5 h-5 text-orange-500/60 flex-shrink-0" />
           <span class="text-sm text-white/80">{{ t('weatherSettings.feelsLike') }}</span>
         </div>
-        <div class="flex items-center gap-3 flex-1 whitespace-nowrap m-2">
+        <div class="flex items-center space-x-3 flex-1 whitespace-nowrap p-2">
           <Sun class="w-5 h-5 text-purple-500/60 flex-shrink-0" />
           <span class="text-sm text-white/80">{{ t('weatherSettings.uv') }}</span>
         </div>
@@ -276,9 +276,9 @@ defineExpose({ save, reset })
         :disabled="weatherLoading"
         @click="handleManualRefresh"
       >
-        <span class="flex items-center gap-2">
+        <div class="flex items-center space-x-2 justify-center">
           <RefreshCw class="w-4 h-4 mr-2" :class="{ 'animate-spin': weatherLoading }" /> {{ t('weatherSettings.refreshNow') }}
-        </span>
+        </div>
       </button>
     </div>
   </div>

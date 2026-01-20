@@ -98,13 +98,13 @@ function closeDrawer() {
           <div class="hidden md:block text-center text-[10px] text-white/30">
             <div>{{ t('settingsDrawer.version', { version: VERSION }) }}</div>
             <div>
-              <a href="https://github.com/teojs/clock-dashboard" target="_blank" class="text-blue-500/80 inline-flex items-center gap-1">
+              <a href="https://github.com/teojs/clock-dashboard" target="_blank" class="text-blue-500/80 inline-flex items-center">
                 {{ t('settingsDrawer.copyright') }}
               </a>
             </div>
           </div>
           <div class="block md:hidden text-center text-[10px] text-white/30 mt-8">
-            <a href="https://github.com/teojs/clock-dashboard" target="_blank" class="text-blue-500/80 inline-flex items-center gap-1">
+            <a href="https://github.com/teojs/clock-dashboard" target="_blank" class="text-blue-500/80 inline-flex items-center">
               <Github class="w-6 h-6 text-white/40" />
             </a>
           </div>
@@ -231,7 +231,7 @@ function closeDrawer() {
   border-radius: 0.75rem;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
   transition: all 0.3s;
 }
@@ -247,7 +247,7 @@ function closeDrawer() {
 
 .settings-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
@@ -257,7 +257,7 @@ function closeDrawer() {
 }
 .settings-input:focus {
   border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .settings-secondary-btn {

@@ -141,7 +141,7 @@ defineExpose({ refreshToday })
           {{ monthLabel }}
         </h2>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center space-x-3">
         <button class="p-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300" @click="changeMonth(-1)">
           <ChevronLeft class="w-6 h-6 " />
         </button>

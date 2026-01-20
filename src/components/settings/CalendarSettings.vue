@@ -24,10 +24,10 @@ defineExpose({ save, reset })
 <template>
   <div class="space-y-10 animate-fade-in">
     <section>
-      <h4 class="text-white/50 mb-4 uppercase tracking-widest text-sm font-medium">
+      <h4 class="text-white/60 mb-4 uppercase tracking-widest text-sm font-medium">
         {{ t('calendarSettings.weekStart') }}
       </h4>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-2 space-x-4">
         <button
           class="settings-tab-btn"
           :class="{ active: calendarDraft.weekStartDay === 1 }"
@@ -46,7 +46,7 @@ defineExpose({ save, reset })
     </section>
 
     <section>
-      <h4 class="text-white/50 mb-4 uppercase tracking-widest text-sm font-medium">
+      <h4 class="text-white/60 mb-4 uppercase tracking-widest text-sm font-medium">
         {{ t('calendarSettings.display') }}
       </h4>
       <div
