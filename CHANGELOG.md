@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.1](https://github.com/teojs/clock-dashboard/compare/v1.19.0...v1.19.1) (2026-01-20)
+
+
+### Bug Fixes
+
+* reduce idle timeout to 30 seconds for automatic homepage redirection and adjust button positioning in ClockWeatherView for better visibility ([ac13cd2](https://github.com/teojs/clock-dashboard/commit/ac13cd219aefb48f0c129588095579b80179d988))
+
 ## [1.19.0](https://github.com/teojs/clock-dashboard/compare/v1.18.0...v1.19.0) (2026-01-20)
 
 
