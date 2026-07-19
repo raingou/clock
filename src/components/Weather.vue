@@ -206,4 +206,59 @@ onUnmounted(() => {
   font-size: 2vh;
   line-height: 1.1;
 }
+
+@media (max-width: 900px) and (orientation: portrait) {
+  #weather-container {
+    padding: 0 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5vh 1rem;
+    align-items: center;
+  }
+
+  #weather-container > div:first-child {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  #weather-container > div:nth-child(2) {
+    justify-content: flex-end;
+    padding: 0;
+  }
+
+  .environment-data {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+
+  #weather-icon {
+    width: clamp(3.5rem, 16vw, 6rem);
+    height: clamp(3.5rem, 16vw, 6rem);
+  }
+
+  #weather-text {
+    font-size: clamp(1.25rem, 5.5vw, 2.25rem);
+  }
+
+  #location-text {
+    max-width: 42vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: clamp(0.65rem, 2.8vw, 1.1rem);
+  }
+
+  #temp-val {
+    font-size: clamp(3.5rem, 18vw, 7rem);
+  }
+
+  .temp-unit {
+    margin-bottom: 3vh;
+  }
+
+  .environment-data,
+  #temp-max,
+  #temp-min {
+    font-size: clamp(1.25rem, 5vw, 2rem);
+  }
+}
 </style>

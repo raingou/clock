@@ -70,12 +70,12 @@ watch(idle, (newIdle) => {
     </button>
 
     <!-- 日期与农历 -->
-    <div v-if="!layoutConfig.clockOnlyMode" class="flex flex-col sm:flex-row items-center md:items-start w-full justify-center">
-      <div class="flex items-center">
+    <div v-if="!layoutConfig.clockOnlyMode" class="date-header flex flex-col sm:flex-row items-center md:items-start w-full justify-center">
+      <div class="date-primary flex items-center">
         <div class="date-day-big">
           {{ now.getDate() }}
         </div>
-        <div class="flex flex-col mr-[8vh]">
+        <div class="date-meta flex flex-col mr-[8vh]">
           <span class="weekday-label">
             {{ weekdayLabel }}
           </span>
@@ -254,5 +254,87 @@ watch(idle, (newIdle) => {
 
 .brightness {
   filter: brightness(1.25);
+}
+
+/* 折叠屏外屏、手机竖屏及接近方形的折叠内屏 */
+@media (max-width: 900px) and (orientation: portrait) {
+  .glass-panel {
+    max-width: 100vw;
+    min-height: 100dvh;
+    padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+    justify-content: space-evenly;
+  }
+
+  .date-header {
+    flex: none;
+    padding: 0 0.5rem;
+  }
+
+  .date-primary {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+
+  .date-meta {
+    margin-right: clamp(1rem, 5vw, 2.5rem);
+  }
+
+  .date-day-big {
+    font-size: clamp(4.5rem, 23vw, 8rem);
+    margin-right: 0.75rem;
+  }
+
+  .weekday-label,
+  .lunar-date-label {
+    font-size: clamp(1.5rem, 7vw, 3rem);
+  }
+
+  .year-label,
+  .lunar-year-label {
+    font-size: clamp(1rem, 4.5vw, 2rem);
+    letter-spacing: 0.08em;
+  }
+
+  .clock-display,
+  .clock-only-mode .clock-display {
+    width: 100%;
+    font-size: 43vw;
+    margin: 2vh 0;
+    flex-shrink: 0;
+  }
+
+  .clock-display.with-seconds,
+  .clock-only-mode .clock-display.with-seconds {
+    font-size: 27vw;
+  }
+}
+
+/* Z Fold 外屏等特别窄的屏幕 */
+@media (max-width: 420px) and (orientation: portrait) {
+  .date-primary {
+    align-content: center;
+  }
+
+  .date-meta {
+    margin-right: 0;
+  }
+
+  .date-primary > div:last-child {
+    width: 100%;
+    align-items: center;
+    margin-top: 0.25rem;
+  }
+
+  .clock-display,
+  .clock-only-mode .clock-display {
+    font-size: 42vw;
+  }
+
+  .clock-display.with-seconds,
+  .clock-only-mode .clock-display.with-seconds {
+    font-size: 26vw;
+  }
 }
 </style>
