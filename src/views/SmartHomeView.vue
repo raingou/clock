@@ -110,7 +110,10 @@ async function toggleEntity(entityId: string) {
   const isOn = isEntityOn(entityId)
 
   let service = ''
-  if (domain === 'cover') {
+  if (domain === 'button') {
+    service = 'press'
+  }
+  else if (domain === 'cover') {
     service = isOn ? 'close_cover' : 'open_cover'
   }
   else if (domain === 'climate') {
@@ -123,11 +126,13 @@ async function toggleEntity(entityId: string) {
   loadingStates.value[entityId] = true
 
   try {
-    await haSocket.callService(domain, service, { entity_id: entityId })
+    // 使用 target 传递实体 ID，兼容新版 Home Assistant WebSocket API。
+    await haSocket.callService(domain, service, {}, { entity_id: entityId })
 
     loadingStates.value[entityId] = false
   }
   catch (e) {
+    console.error(`HA service call failed: ${domain}.${service} (${entityId})`, e)
     alert(t('smartHome.actionFailed'))
     loadingStates.value[entityId] = false
   }

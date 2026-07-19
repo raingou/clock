@@ -61,11 +61,11 @@ export class HASocketService {
     }
   }
 
-  async callService(domain: string, service: string, serviceData?: any) {
+  async callService(domain: string, service: string, serviceData?: Record<string, unknown>, target?: { entity_id?: string | string[] }) {
     if (!this.connection) {
       throw new Error('HA WebSocket not connected')
     }
-    return haCallService(this.connection, domain, service, serviceData)
+    return haCallService(this.connection, domain, service, serviceData, target)
   }
 
   isConnected() {
