@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LunarAnniversary } from '../../types'
+import type { Anniversary } from '../../types'
 import { Download, Plus, Trash2, Upload } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
@@ -12,41 +12,44 @@ const { t } = useI18n()
 
 const calendarDraft = ref({
   ...calendarConfig.value,
-  lunarAnniversaries: [...(calendarConfig.value.lunarAnniversaries || [])],
+  lunarAnniversaries: (calendarConfig.value.lunarAnniversaries || []).map(item => ({ ...item, calendarType: item.calendarType || 'lunar' as const })),
 })
 const importInput = ref<HTMLInputElement | null>(null)
 
 const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
+const solarMonths = Array.from({ length: 12 }, (_, index) => `${index + 1}月`)
 const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十']
+const solarDays = Array.from({ length: 31 }, (_, index) => `${index + 1}日`)
 
 function newId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
 function addAnniversary() {
-  calendarDraft.value.lunarAnniversaries.push({ id: newId(), name: '', month: 1, day: 1, leapMonth: 'normal' })
+  calendarDraft.value.lunarAnniversaries.push({ id: newId(), name: '', calendarType: 'lunar', month: 1, day: 1, leapMonth: 'normal' })
 }
 
 function removeAnniversary(id: string) {
   calendarDraft.value.lunarAnniversaries = calendarDraft.value.lunarAnniversaries.filter(item => item.id !== id)
 }
 
-function isValidAnniversary(item: unknown): item is LunarAnniversary {
+function isValidAnniversary(item: unknown): item is Anniversary {
   if (!item || typeof item !== 'object') return false
-  const value = item as Partial<LunarAnniversary>
+  const value = item as Partial<Anniversary>
   return typeof value.name === 'string'
     && value.name.trim().length > 0
     && Number.isInteger(value.month) && value.month! >= 1 && value.month! <= 12
-    && Number.isInteger(value.day) && value.day! >= 1 && value.day! <= 30
+    && Number.isInteger(value.day) && value.day! >= 1 && value.day! <= (value.calendarType === 'solar' ? 31 : 30)
+    && (!value.calendarType || ['lunar', 'solar'].includes(value.calendarType))
     && ['normal', 'leap', 'both'].includes(value.leapMonth || '')
 }
 
 function exportJson() {
-  const data = JSON.stringify({ version: 1, lunarAnniversaries: calendarDraft.value.lunarAnniversaries }, null, 2)
+  const data = JSON.stringify({ version: 2, anniversaries: calendarDraft.value.lunarAnniversaries }, null, 2)
   const url = URL.createObjectURL(new Blob([data], { type: 'application/json' }))
   const link = document.createElement('a')
   link.href = url
-  link.download = `lunar-anniversaries-${new Date().toISOString().slice(0, 10)}.json`
+  link.download = `anniversaries-${new Date().toISOString().slice(0, 10)}.json`
   link.click()
   URL.revokeObjectURL(url)
 }
@@ -57,9 +60,14 @@ async function importJson(event: Event) {
   if (!file) return
   try {
     const parsed = JSON.parse(await file.text())
-    const items = Array.isArray(parsed) ? parsed : parsed?.lunarAnniversaries
+    const items = Array.isArray(parsed) ? parsed : (parsed?.anniversaries || parsed?.lunarAnniversaries)
     if (!Array.isArray(items) || !items.every(isValidAnniversary)) throw new Error('invalid')
-    calendarDraft.value.lunarAnniversaries = items.map(item => ({ ...item, id: item.id || newId(), name: item.name.trim() }))
+    calendarDraft.value.lunarAnniversaries = items.map(item => ({
+      ...item,
+      id: item.id || newId(),
+      name: item.name.trim(),
+      calendarType: item.calendarType || 'lunar',
+    }))
     window.alert(t('calendarSettings.importSuccess', { count: items.length }))
   }
   catch {
@@ -77,7 +85,7 @@ function save() {
 function reset() {
   calendarDraft.value = {
     ...calendarConfig.value,
-    lunarAnniversaries: [...(calendarConfig.value.lunarAnniversaries || [])],
+    lunarAnniversaries: (calendarConfig.value.lunarAnniversaries || []).map(item => ({ ...item, calendarType: item.calendarType || 'lunar' as const })),
   }
 }
 
@@ -141,18 +149,22 @@ defineExpose({ save, reset })
       </div>
 
       <div class="space-y-3">
-        <div v-for="item in calendarDraft.lunarAnniversaries" :key="item.id" class="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center">
+        <div v-for="item in calendarDraft.lunarAnniversaries" :key="item.id" class="grid grid-cols-[1fr_auto_auto_auto_auto] gap-2 items-center">
           <input v-model="item.name" class="settings-input min-w-0" :placeholder="t('calendarSettings.anniversaryName')">
+          <select v-model="item.calendarType" class="settings-input w-24">
+            <option value="lunar">{{ t('calendarSettings.lunar') }}</option>
+            <option value="solar">{{ t('calendarSettings.solar') }}</option>
+          </select>
           <select v-model.number="item.month" class="settings-input w-24">
-            <option v-for="(label, index) in lunarMonths" :key="label" :value="index + 1">{{ label }}</option>
+            <option v-for="(label, index) in item.calendarType === 'solar' ? solarMonths : lunarMonths" :key="label" :value="index + 1">{{ label }}</option>
           </select>
           <select v-model.number="item.day" class="settings-input w-24">
-            <option v-for="(label, index) in lunarDays" :key="label" :value="index + 1">{{ label }}</option>
+            <option v-for="(label, index) in item.calendarType === 'solar' ? solarDays : lunarDays" :key="label" :value="index + 1">{{ label }}</option>
           </select>
           <button type="button" class="p-3 text-red-300 hover:bg-white/10 rounded-xl" @click="removeAnniversary(item.id)">
             <Trash2 class="w-5 h-5" />
           </button>
-          <select v-model="item.leapMonth" class="settings-input col-span-4">
+          <select v-if="item.calendarType !== 'solar'" v-model="item.leapMonth" class="settings-input col-span-5">
             <option value="normal">{{ t('calendarSettings.normalMonth') }}</option>
             <option value="leap">{{ t('calendarSettings.leapMonth') }}</option>
             <option value="both">{{ t('calendarSettings.bothMonths') }}</option>

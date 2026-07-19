@@ -76,7 +76,7 @@ const calendarDays = computed(() => {
 
   return days.map(day => ({
     ...day,
-    anniversaries: getAnniversaries(day.lunar),
+    anniversaries: getAnniversaries(day.date, day.lunar),
   }))
 })
 
@@ -103,8 +103,12 @@ const monthLabel = computed(() => {
 
 const showLunar = computed(() => locale.value !== 'en-US')
 
-function getAnniversaries(lunar: LunarInfo) {
+function getAnniversaries(date: Date, lunar: LunarInfo) {
   return (calendarConfig.value.lunarAnniversaries || []).filter((item) => {
+    if (item.calendarType === 'solar') {
+      return item.month === date.getMonth() + 1 && item.day === date.getDate()
+    }
+    // calendarType 缺失时按农历处理，兼容旧版本保存的数据。
     if (item.month !== lunar.monthNumber || item.day !== lunar.dayNumber) return false
     if (item.leapMonth === 'both') return true
     return item.leapMonth === (lunar.isLeapMonth ? 'leap' : 'normal')

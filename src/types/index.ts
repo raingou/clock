@@ -9,9 +9,10 @@ export interface HAEntity {
   name: string
 }
 
-export interface LunarAnniversary {
+export interface Anniversary {
   id: string
   name: string
+  calendarType: 'lunar' | 'solar'
   month: number
   day: number
   leapMonth: 'normal' | 'leap' | 'both'
