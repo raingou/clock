@@ -207,12 +207,79 @@ onUnmounted(() => {
   line-height: 1.1;
 }
 
-@media (max-width: 900px), (max-aspect-ratio: 6/5) {
+/* Z Fold 展开屏：三组信息保持同一行，并按短边同比缩放。 */
+@media (max-aspect-ratio: 6/5) and (min-width: 601px) {
+  #weather-container {
+    padding: 0 clamp(1rem, 3vmin, 3rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) auto minmax(0, 1fr);
+    gap: clamp(1rem, 3vmin, 3rem);
+    align-items: center;
+  }
+
+  #weather-container > div:first-child {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  #weather-container > div:nth-child(2) {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .environment-data {
+    grid-column: auto;
+    justify-content: flex-end;
+    font-size: clamp(1.25rem, 2.8vmin, 2.5rem);
+  }
+
+  #weather-icon {
+    width: clamp(3.5rem, 8vmin, 7rem);
+    height: clamp(3.5rem, 8vmin, 7rem);
+  }
+
+  #weather-text {
+    font-size: clamp(1.25rem, 3.2vmin, 2.75rem);
+  }
+
+  #location-text {
+    max-width: 34vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: clamp(0.7rem, 1.55vmin, 1.35rem);
+  }
+
+  #temp-val {
+    font-size: clamp(4rem, 8vmin, 7rem);
+  }
+
+  .temp-unit {
+    font-size: clamp(1.25rem, 2.5vmin, 2.25rem);
+    margin-bottom: 4vmin;
+  }
+
+  #temp-max,
+  #temp-min {
+    font-size: clamp(1.25rem, 2.7vmin, 2.25rem);
+  }
+
+  .environment-data-icon {
+    width: clamp(1.25rem, 2.8vmin, 2.5rem);
+    height: clamp(1.25rem, 2.8vmin, 2.5rem);
+  }
+
+  #aqi-label {
+    font-size: clamp(0.7rem, 1.4vmin, 1.2rem);
+  }
+}
+
+/* 折叠外屏及普通窄屏：空间不足时才分成两排。 */
+@media (max-width: 600px) {
   #weather-container {
     padding: 0 0.75rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5vh 1rem;
+    gap: 1.25vh 0.75rem;
     align-items: center;
   }
 
@@ -229,36 +296,36 @@ onUnmounted(() => {
   .environment-data {
     grid-column: 1 / -1;
     justify-content: center;
+    font-size: clamp(1rem, 5vw, 1.6rem);
   }
 
   #weather-icon {
-    width: clamp(3.5rem, 16vw, 6rem);
-    height: clamp(3.5rem, 16vw, 6rem);
+    width: clamp(3rem, 14vw, 5rem);
+    height: clamp(3rem, 14vw, 5rem);
   }
 
   #weather-text {
-    font-size: clamp(1.25rem, 5.5vw, 2.25rem);
+    font-size: clamp(1.1rem, 5vw, 1.75rem);
   }
 
   #location-text {
     max-width: 42vw;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: clamp(0.65rem, 2.8vw, 1.1rem);
+    font-size: clamp(0.65rem, 2.8vw, 1rem);
   }
 
   #temp-val {
-    font-size: clamp(3.5rem, 18vw, 7rem);
+    font-size: clamp(3.25rem, 16vw, 5.5rem);
   }
 
   .temp-unit {
-    margin-bottom: 3vh;
+    margin-bottom: 2.5vh;
   }
 
-  .environment-data,
   #temp-max,
   #temp-min {
-    font-size: clamp(1.25rem, 5vw, 2rem);
+    font-size: clamp(1rem, 4.5vw, 1.5rem);
   }
 }
 </style>
