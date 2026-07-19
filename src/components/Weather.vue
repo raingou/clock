@@ -207,7 +207,7 @@ onUnmounted(() => {
   line-height: 1.1;
 }
 
-@media (max-width: 900px) and (orientation: portrait) {
+@media (max-width: 900px), (max-aspect-ratio: 6/5) {
   #weather-container {
     padding: 0 0.75rem;
     display: grid;

@@ -217,23 +217,23 @@ watch(idle, (newIdle) => {
   align-items: center;
   justify-content: center;
   font-family: 'SFCompactRounded', 'Huninn', sans-serif;
-  font-size: 54vh;
+  font-size: min(54vh, 35vw);
   margin-top: 6vh;
   margin-bottom: 6vh;
 }
 
 .clock-display.with-seconds {
-  font-size: 38vh;
+  font-size: min(38vh, 22vw);
 }
 
 .clock-only-mode .clock-display {
-  font-size: 44vw;
+  font-size: min(54vh, 35vw);
   margin-top: 0;
   margin-bottom: 0;
 }
 
 .clock-only-mode .clock-display.with-seconds {
-  font-size: 30vw;
+  font-size: min(38vh, 22vw);
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -257,7 +257,7 @@ watch(idle, (newIdle) => {
 }
 
 /* 折叠屏外屏、手机竖屏及接近方形的折叠内屏 */
-@media (max-width: 900px) and (orientation: portrait) {
+@media (max-width: 900px), (max-aspect-ratio: 6/5) {
   .glass-panel {
     max-width: 100vw;
     min-height: 100dvh;
@@ -300,14 +300,14 @@ watch(idle, (newIdle) => {
   .clock-display,
   .clock-only-mode .clock-display {
     width: 100%;
-    font-size: 43vw;
+    font-size: min(40vh, 34vw);
     margin: 2vh 0;
     flex-shrink: 0;
   }
 
   .clock-display.with-seconds,
   .clock-only-mode .clock-display.with-seconds {
-    font-size: 27vw;
+    font-size: min(26vh, 20vw);
   }
 }
 
