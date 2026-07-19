@@ -1,4 +1,4 @@
-import type { HAConfig } from '../types'
+import type { HAConfig, LunarAnniversary } from '../types'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { normalizeLocale } from '../i18n'
@@ -40,6 +40,8 @@ export const useConfigStore = defineStore('config', () => {
     weekStartDay: 0,
     /** 显示法定节假日 */
     showHolidays: true,
+    /** 每年重复的农历纪念日 */
+    lunarAnniversaries: [] as LunarAnniversary[],
   })
 
   const layoutConfig = ref({

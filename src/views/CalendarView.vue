@@ -74,7 +74,10 @@ const calendarDays = computed(() => {
     days.push({ date: d, isOtherMonth: true, lunar: getLunarDate(d) })
   }
 
-  return days
+  return days.map(day => ({
+    ...day,
+    anniversaries: getAnniversaries(day.lunar),
+  }))
 })
 
 const weekHeaders = computed(() => {
@@ -99,6 +102,14 @@ const monthLabel = computed(() => {
 })
 
 const showLunar = computed(() => locale.value !== 'en-US')
+
+function getAnniversaries(lunar: LunarInfo) {
+  return (calendarConfig.value.lunarAnniversaries || []).filter((item) => {
+    if (item.month !== lunar.monthNumber || item.day !== lunar.dayNumber) return false
+    if (item.leapMonth === 'both') return true
+    return item.leapMonth === (lunar.isLeapMonth ? 'leap' : 'normal')
+  })
+}
 
 function changeMonth(delta: number) {
   const d = new Date(currentMonthDate.value)
@@ -180,7 +191,11 @@ defineExpose({ refreshToday })
           <div class="day-number-wrapper flex flex-col items-center justify-center overflow-hidden px-2">
             <span class="text-[4vh] leading-none font-bold">{{ day.date.getDate() }}</span>
             <div v-if="showLunar" class="lunar-text text-[1.9vh] leading-none font-normal mt-[1vh] text-center line-clamp-1">
+              <span v-if="day.anniversaries.length" class="text-pink-300 opacity-100 font-medium">
+                {{ day.anniversaries.map(item => item.name).join('、') }}
+              </span>
               <span
+                v-else
                 :class="day.lunar.isFestival ? 'text-blue-300 opacity-100' : 'opacity-60'"
               >
                 {{ day.lunar.festival || (day.lunar.date === '初一' ? `${day.lunar.month}月` : day.lunar.date) }}

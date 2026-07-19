@@ -72,7 +72,17 @@
     "monday": "Monday",
     "sunday": "Sunday",
     "display": "Display",
-    "showHolidays": "Show Holidays"
+    "showHolidays": "Show Holidays",
+    "anniversaries": "Lunar Anniversaries",
+    "anniversaryName": "Anniversary name",
+    "addAnniversary": "Add anniversary",
+    "normalMonth": "Regular month only",
+    "leapMonth": "Leap month only",
+    "bothMonths": "Regular and leap months",
+    "importJson": "Import JSON",
+    "exportJson": "Export JSON",
+    "importSuccess": "Imported {count} anniversaries. Click Save to apply.",
+    "importInvalid": "Import failed: invalid JSON or anniversary data."
   },
   "weatherSettings": {
     "locationMode": "Location Mode",

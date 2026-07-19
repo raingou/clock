@@ -72,7 +72,17 @@
     "monday": "星期一",
     "sunday": "星期日",
     "display": "显示设置",
-    "showHolidays": "显示法定节假日"
+    "showHolidays": "显示法定节假日",
+    "anniversaries": "农历纪念日",
+    "anniversaryName": "纪念日名称",
+    "addAnniversary": "添加纪念日",
+    "normalMonth": "仅普通月份",
+    "leapMonth": "仅闰月",
+    "bothMonths": "普通月份和闰月",
+    "importJson": "导入 JSON",
+    "exportJson": "导出 JSON",
+    "importSuccess": "成功导入 {count} 个纪念日，请点击保存。",
+    "importInvalid": "导入失败：JSON 格式或纪念日数据不正确。"
   },
   "weatherSettings": {
     "locationMode": "位置获取方式",

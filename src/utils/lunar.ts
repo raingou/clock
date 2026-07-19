@@ -28,6 +28,9 @@ export function getLunarDate(date: Date): LunarInfo {
 
     return {
       date: day,
+      monthNumber: Math.abs(lunar.getMonth()),
+      dayNumber: lunar.getDay(),
+      isLeapMonth: lunar.getMonth() < 0,
       year: yearGanzhi,
       month,
       yearShengxiao: lunar.getYearShengXiao(),

@@ -9,6 +9,14 @@ export interface HAEntity {
   name: string
 }
 
+export interface LunarAnniversary {
+  id: string
+  name: string
+  month: number
+  day: number
+  leapMonth: 'normal' | 'leap' | 'both'
+}
+
 export interface WeatherInfo {
   text: string
   icon?: string
@@ -17,6 +25,9 @@ export interface WeatherInfo {
 export interface LunarInfo {
   month: string // 正月、冬月、闰二月
   date: string // 初一、十五
+  monthNumber?: number
+  dayNumber?: number
+  isLeapMonth?: boolean
   year: string // 乙巳
   yearShengxiao: string // 蛇
   monthGanzhi: string // 己丑
