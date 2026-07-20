@@ -282,7 +282,7 @@ watch(idle, (newIdle) => {
   }
 
   .date-day-big {
-    font-size: clamp(4.5rem, 23vw, 8rem);
+    font-size: clamp(3.5rem, 16vw, 6rem);
     margin-right: 0.75rem;
   }
 
