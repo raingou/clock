@@ -2,11 +2,13 @@
 import type { LunarInfo } from '../types'
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AlmanacModal from '../components/AlmanacModal.vue'
 import { useConfigStore } from '../stores/config'
 import { getAlmanacDetails, getLunarDate } from '../utils/lunar'
+import { getPublicHolidays } from '../utils/publicHolidays'
+import type { HolidayCountry, PublicHoliday } from '../utils/publicHolidays'
 
 const configStore = useConfigStore()
 const { calendarConfig, showDrawer, activeTab } = storeToRefs(configStore)
@@ -14,6 +16,8 @@ const { t, locale } = useI18n()
 
 const currentMonthDate = ref(new Date())
 const today = ref(new Date())
+const remoteHolidayMap = ref<Record<string, Array<{ code: string, name: string }>>>({})
+let holidayRequestId = 0
 
 function openSettings() {
   activeTab.value = 'calendar'
@@ -77,6 +81,7 @@ const calendarDays = computed(() => {
   return days.map(day => ({
     ...day,
     anniversaries: getAnniversaries(day.date, day.lunar),
+    holidays: getHolidayLabels(day.date, day.lunar),
   }))
 })
 
@@ -102,6 +107,50 @@ const monthLabel = computed(() => {
 })
 
 const showLunar = computed(() => locale.value !== 'en-US')
+const selectedHolidayCountries = computed(() => calendarConfig.value.holidayCountries || ['CN'])
+
+function getHolidayLabels(date: Date, lunar: LunarInfo) {
+  if (!calendarConfig.value.showHolidays) return []
+  const labels: Array<{ code: string, name: string }> = []
+  if (selectedHolidayCountries.value.includes('CN') && lunar.holiday) {
+    labels.push({ code: t('calendar.countryShort.CN'), name: lunar.holiday })
+  }
+  const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  labels.push(...(remoteHolidayMap.value[key] || []))
+  return labels
+}
+
+async function loadRemoteHolidays() {
+  const requestId = ++holidayRequestId
+  const countries = selectedHolidayCountries.value.filter(code => code !== 'CN') as HolidayCountry[]
+  if (!calendarConfig.value.showHolidays || !countries.length) {
+    remoteHolidayMap.value = {}
+    return
+  }
+
+  try {
+    const results = await Promise.all(countries.map(async country => ({
+      country,
+      holidays: await getPublicHolidays(country, year.value),
+    })))
+    if (requestId !== holidayRequestId) return
+
+    const next: Record<string, Array<{ code: string, name: string }>> = {}
+    results.forEach(({ country, holidays }: { country: HolidayCountry, holidays: PublicHoliday[] }) => {
+      holidays.forEach((holiday) => {
+        if (!next[holiday.date]) next[holiday.date] = []
+        next[holiday.date].push({ code: t(`calendar.countryShort.${country}`), name: holiday.name })
+      })
+    })
+    remoteHolidayMap.value = next
+  }
+  catch (error) {
+    console.error('Failed to load public holidays:', error)
+    if (requestId === holidayRequestId) remoteHolidayMap.value = {}
+  }
+}
+
+watch([year, selectedHolidayCountries, () => calendarConfig.value.showHolidays], loadRemoteHolidays, { immediate: true, deep: true })
 
 function getAnniversaries(date: Date, lunar: LunarInfo) {
   return (calendarConfig.value.lunarAnniversaries || []).filter((item) => {
@@ -194,20 +243,20 @@ defineExpose({ refreshToday })
         >
           <div class="day-number-wrapper flex flex-col items-center justify-center overflow-hidden px-2">
             <span class="text-[4vh] leading-none font-bold">{{ day.date.getDate() }}</span>
-            <div v-if="showLunar" class="lunar-text text-[1.9vh] leading-none font-normal mt-[1vh] text-center line-clamp-1">
+            <div v-if="showLunar || day.holidays.length" class="lunar-text text-[1.9vh] leading-none font-normal mt-[1vh] text-center line-clamp-1" :title="day.holidays.map(item => `${item.code}·${item.name}`).join(' / ')">
               <span v-if="day.anniversaries.length" class="text-pink-300 opacity-100 font-medium">
                 {{ day.anniversaries.map(item => item.name).join('、') }}
               </span>
               <span
-                v-else
+                v-else-if="showLunar"
                 :class="day.lunar.isFestival ? 'text-blue-300 opacity-100' : 'opacity-60'"
               >
                 {{ day.lunar.festival || (day.lunar.date === '初一' ? `${day.lunar.month}月` : day.lunar.date) }}
               </span>
-              <template v-if="calendarConfig.showHolidays && day.lunar.holiday">
+              <template v-if="day.holidays.length">
                 <span class="opacity-60"> · </span>
-                <span :class="day.lunar.holiday === '休' ? 'text-red-400' : 'text-orange-300'">
-                  {{ day.lunar.holiday }}
+                <span class="text-red-300">
+                  {{ day.holidays.map(item => `${item.code}·${item.name}`).join(' / ') }}
                 </span>
               </template>
             </div>

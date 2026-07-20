@@ -12,6 +12,7 @@ const { t } = useI18n()
 
 const calendarDraft = ref({
   ...calendarConfig.value,
+  holidayCountries: [...(calendarConfig.value.holidayCountries || ['CN'])],
   lunarAnniversaries: (calendarConfig.value.lunarAnniversaries || []).map(item => ({ ...item, calendarType: item.calendarType || 'lunar' as const })),
 })
 const importInput = ref<HTMLInputElement | null>(null)
@@ -20,6 +21,18 @@ const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月',
 const solarMonths = Array.from({ length: 12 }, (_, index) => `${index + 1}月`)
 const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十']
 const solarDays = Array.from({ length: 31 }, (_, index) => `${index + 1}日`)
+const holidayCountries = [
+  { code: 'CN' as const, labelKey: 'calendarSettings.china' },
+  { code: 'VN' as const, labelKey: 'calendarSettings.vietnam' },
+  { code: 'KH' as const, labelKey: 'calendarSettings.cambodia' },
+]
+
+function toggleHolidayCountry(code: 'CN' | 'VN' | 'KH') {
+  const countries = calendarDraft.value.holidayCountries
+  calendarDraft.value.holidayCountries = countries.includes(code)
+    ? countries.filter(item => item !== code)
+    : [...countries, code]
+}
 
 function newId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
@@ -85,6 +98,7 @@ function save() {
 function reset() {
   calendarDraft.value = {
     ...calendarConfig.value,
+    holidayCountries: [...(calendarConfig.value.holidayCountries || ['CN'])],
     lunarAnniversaries: (calendarConfig.value.lunarAnniversaries || []).map(item => ({ ...item, calendarType: item.calendarType || 'lunar' as const })),
   }
 }
@@ -129,6 +143,18 @@ defineExpose({ save, reset })
         <div class="toggle-switch">
           <div class="toggle-dot" />
         </div>
+      </div>
+      <div v-if="calendarDraft.showHolidays" class="grid grid-cols-3 gap-3 mt-4">
+        <button
+          v-for="country in holidayCountries"
+          :key="country.code"
+          type="button"
+          class="settings-tab-btn"
+          :class="{ active: calendarDraft.holidayCountries.includes(country.code) }"
+          @click="toggleHolidayCountry(country.code)"
+        >
+          {{ t(country.labelKey) }}
+        </button>
       </div>
     </section>
 

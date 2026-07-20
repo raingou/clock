@@ -73,6 +73,9 @@
     "sunday": "Sunday",
     "display": "Display",
     "showHolidays": "Show Holidays",
+    "china": "China",
+    "vietnam": "Vietnam",
+    "cambodia": "Cambodia",
     "anniversaries": "Anniversaries",
     "anniversaryName": "Anniversary name",
     "lunar": "Lunar",
@@ -143,7 +146,12 @@
     "setupTip": "Click the top-right settings to configure Home Assistant."
   },
   "calendar": {
-    "today": "Today"
+    "today": "Today",
+    "countryShort": {
+      "CN": "CN",
+      "VN": "VN",
+      "KH": "KH"
+    }
   },
   "weather": {
     "fiveDayForecast": "5-Day Forecast",

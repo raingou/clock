@@ -73,6 +73,9 @@
     "sunday": "星期日",
     "display": "顯示設定",
     "showHolidays": "顯示法定節假日",
+    "china": "中國",
+    "vietnam": "越南",
+    "cambodia": "柬埔寨",
     "anniversaries": "紀念日",
     "anniversaryName": "紀念日名稱",
     "lunar": "農曆",
@@ -143,7 +146,12 @@
     "setupTip": "請點擊右上角設定 Home Assistant 位址和權杖"
   },
   "calendar": {
-    "today": "今天"
+    "today": "今天",
+    "countryShort": {
+      "CN": "中",
+      "VN": "越",
+      "KH": "柬"
+    }
   },
   "weather": {
     "fiveDayForecast": "5 日天氣預報",

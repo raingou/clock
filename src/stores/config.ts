@@ -40,6 +40,8 @@ export const useConfigStore = defineStore('config', () => {
     weekStartDay: 0,
     /** 显示法定节假日 */
     showHolidays: true,
+    /** 显示法定节假日的国家 */
+    holidayCountries: ['CN'] as Array<'CN' | 'VN' | 'KH'>,
     /** 每年重复的农历纪念日 */
     lunarAnniversaries: [] as Anniversary[],
   })

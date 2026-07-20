@@ -73,6 +73,9 @@
     "sunday": "星期日",
     "display": "显示设置",
     "showHolidays": "显示法定节假日",
+    "china": "中国",
+    "vietnam": "越南",
+    "cambodia": "柬埔寨",
     "anniversaries": "纪念日",
     "anniversaryName": "纪念日名称",
     "lunar": "农历",
@@ -143,7 +146,12 @@
     "setupTip": "请点击右上角设置 Home Assistant 地址和令牌"
   },
   "calendar": {
-    "today": "今天"
+    "today": "今天",
+    "countryShort": {
+      "CN": "中",
+      "VN": "越",
+      "KH": "柬"
+    }
   },
   "weather": {
     "fiveDayForecast": "5日天气预报",
