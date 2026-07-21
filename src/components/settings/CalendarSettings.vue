@@ -175,22 +175,22 @@ defineExpose({ save, reset })
       </div>
 
       <div class="space-y-3">
-        <div v-for="item in calendarDraft.lunarAnniversaries" :key="item.id" class="grid grid-cols-[1fr_auto_auto_auto_auto] gap-2 items-center">
-          <input v-model="item.name" class="settings-input min-w-0" :placeholder="t('calendarSettings.anniversaryName')">
-          <select v-model="item.calendarType" class="settings-input w-24">
+        <div v-for="item in calendarDraft.lunarAnniversaries" :key="item.id" class="grid grid-cols-[repeat(3,minmax(0,1fr))_auto] gap-2 items-center">
+          <input v-model="item.name" class="settings-input min-w-0 col-span-4" :placeholder="t('calendarSettings.anniversaryName')">
+          <select v-model="item.calendarType" class="settings-input min-w-0">
             <option value="lunar">{{ t('calendarSettings.lunar') }}</option>
             <option value="solar">{{ t('calendarSettings.solar') }}</option>
           </select>
-          <select v-model.number="item.month" class="settings-input w-24">
+          <select v-model.number="item.month" class="settings-input min-w-0">
             <option v-for="(label, index) in item.calendarType === 'solar' ? solarMonths : lunarMonths" :key="label" :value="index + 1">{{ label }}</option>
           </select>
-          <select v-model.number="item.day" class="settings-input w-24">
+          <select v-model.number="item.day" class="settings-input min-w-0">
             <option v-for="(label, index) in item.calendarType === 'solar' ? solarDays : lunarDays" :key="label" :value="index + 1">{{ label }}</option>
           </select>
           <button type="button" class="p-3 text-red-300 hover:bg-white/10 rounded-xl" @click="removeAnniversary(item.id)">
             <Trash2 class="w-5 h-5" />
           </button>
-          <select v-if="item.calendarType !== 'solar'" v-model="item.leapMonth" class="settings-input col-span-5">
+          <select v-if="item.calendarType !== 'solar'" v-model="item.leapMonth" class="settings-input col-span-4">
             <option value="normal">{{ t('calendarSettings.normalMonth') }}</option>
             <option value="leap">{{ t('calendarSettings.leapMonth') }}</option>
             <option value="both">{{ t('calendarSettings.bothMonths') }}</option>
