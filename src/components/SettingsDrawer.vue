@@ -256,6 +256,14 @@ function closeDrawer() {
   background: rgba(255, 255, 255, 0.08);
 }
 
+/* Native select menus use a light popup on some browsers (notably Chrome on
+   Windows). Keep the closed control in the dark theme, but make popup options
+   readable against that browser-provided light background. */
+select.settings-input option {
+  color: #111827;
+  background-color: #fff;
+}
+
 .settings-secondary-btn {
   display: flex;
   align-items: center;
