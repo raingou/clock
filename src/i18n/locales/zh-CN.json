@@ -57,7 +57,16 @@
   },
   "generalSettings": {
     "layout": "界面布局",
-    "clockOnlyMode": "仅显示时钟"
+    "clockOnlyMode": "仅显示时钟",
+    "backup": "系统配置备份",
+    "backupDescription": "统一导入或导出通用、时钟、天气、日历和 HA 的全部配置。",
+    "importAll": "导入全部配置",
+    "exportAll": "导出全部配置",
+    "tokenWarning": "注意：备份文件包含 HA 地址和长期访问令牌，请妥善保管。",
+    "exportSecurityWarning": "导出的文件包含 Home Assistant 长期访问令牌，请勿发送给他人。是否继续导出？",
+    "importConfirm": "导入会覆盖当前全部系统配置，是否继续？",
+    "importSuccess": "全部系统配置已成功恢复。",
+    "importInvalid": "导入失败：文件不是有效的 Clock Dashboard 系统配置备份。"
   },
   "clockSettings": {
     "color": "时钟颜色",

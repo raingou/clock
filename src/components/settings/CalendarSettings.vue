@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Anniversary } from '../../types'
-import { Download, Plus, Trash2, Upload } from 'lucide-vue-next'
+import { Plus, Trash2 } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -15,7 +14,6 @@ const calendarDraft = ref({
   holidayCountries: [...(calendarConfig.value.holidayCountries || ['CN'])],
   lunarAnniversaries: (calendarConfig.value.lunarAnniversaries || []).map(item => ({ ...item, calendarType: item.calendarType || 'lunar' as const })),
 })
-const importInput = ref<HTMLInputElement | null>(null)
 
 const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
 const solarMonths = Array.from({ length: 12 }, (_, index) => `${index + 1}月`)
@@ -44,51 +42,6 @@ function addAnniversary() {
 
 function removeAnniversary(id: string) {
   calendarDraft.value.lunarAnniversaries = calendarDraft.value.lunarAnniversaries.filter(item => item.id !== id)
-}
-
-function isValidAnniversary(item: unknown): item is Anniversary {
-  if (!item || typeof item !== 'object') return false
-  const value = item as Partial<Anniversary>
-  return typeof value.name === 'string'
-    && value.name.trim().length > 0
-    && Number.isInteger(value.month) && value.month! >= 1 && value.month! <= 12
-    && Number.isInteger(value.day) && value.day! >= 1 && value.day! <= (value.calendarType === 'solar' ? 31 : 30)
-    && (!value.calendarType || ['lunar', 'solar'].includes(value.calendarType))
-    && ['normal', 'leap', 'both'].includes(value.leapMonth || '')
-}
-
-function exportJson() {
-  const data = JSON.stringify({ version: 2, anniversaries: calendarDraft.value.lunarAnniversaries }, null, 2)
-  const url = URL.createObjectURL(new Blob([data], { type: 'application/json' }))
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `anniversaries-${new Date().toISOString().slice(0, 10)}.json`
-  link.click()
-  URL.revokeObjectURL(url)
-}
-
-async function importJson(event: Event) {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
-  try {
-    const parsed = JSON.parse(await file.text())
-    const items = Array.isArray(parsed) ? parsed : (parsed?.anniversaries || parsed?.lunarAnniversaries)
-    if (!Array.isArray(items) || !items.every(isValidAnniversary)) throw new Error('invalid')
-    calendarDraft.value.lunarAnniversaries = items.map(item => ({
-      ...item,
-      id: item.id || newId(),
-      name: item.name.trim(),
-      calendarType: item.calendarType || 'lunar',
-    }))
-    window.alert(t('calendarSettings.importSuccess', { count: items.length }))
-  }
-  catch {
-    window.alert(t('calendarSettings.importInvalid'))
-  }
-  finally {
-    input.value = ''
-  }
 }
 
 function save() {
@@ -159,20 +112,9 @@ defineExpose({ save, reset })
     </section>
 
     <section>
-      <div class="flex items-center justify-between gap-3 mb-4">
-        <h4 class="text-white/60 uppercase tracking-widest text-sm font-medium">
-          {{ t('calendarSettings.anniversaries') }}
-        </h4>
-        <div class="flex gap-2">
-          <button class="settings-secondary-btn" type="button" @click="importInput?.click()">
-            <Upload class="w-4 h-4" /> {{ t('calendarSettings.importJson') }}
-          </button>
-          <button class="settings-secondary-btn" type="button" @click="exportJson">
-            <Download class="w-4 h-4" /> {{ t('calendarSettings.exportJson') }}
-          </button>
-          <input ref="importInput" type="file" accept="application/json,.json" class="hidden" @change="importJson">
-        </div>
-      </div>
+      <h4 class="text-white/60 uppercase tracking-widest text-sm font-medium mb-4">
+        {{ t('calendarSettings.anniversaries') }}
+      </h4>
 
       <div class="space-y-3">
         <div v-for="item in calendarDraft.lunarAnniversaries" :key="item.id" class="grid grid-cols-[repeat(3,minmax(0,1fr))_auto] gap-2 items-center">

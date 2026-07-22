@@ -57,7 +57,16 @@
   },
   "generalSettings": {
     "layout": "界面佈局",
-    "clockOnlyMode": "僅顯示時鐘"
+    "clockOnlyMode": "僅顯示時鐘",
+    "backup": "系統設定備份",
+    "backupDescription": "統一匯入或匯出通用、時鐘、天氣、日曆和 HA 的全部設定。",
+    "importAll": "匯入全部設定",
+    "exportAll": "匯出全部設定",
+    "tokenWarning": "注意：備份檔案包含 HA 位址和長期存取權杖，請妥善保管。",
+    "exportSecurityWarning": "匯出的檔案包含 Home Assistant 長期存取權杖，請勿傳送給他人。是否繼續匯出？",
+    "importConfirm": "匯入會覆蓋目前全部系統設定，是否繼續？",
+    "importSuccess": "全部系統設定已成功還原。",
+    "importInvalid": "匯入失敗：檔案不是有效的 Clock Dashboard 系統設定備份。"
   },
   "clockSettings": {
     "color": "時鐘顏色",

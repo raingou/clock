@@ -57,7 +57,16 @@
   },
   "generalSettings": {
     "layout": "Layout",
-    "clockOnlyMode": "Clock Only"
+    "clockOnlyMode": "Clock Only",
+    "backup": "System configuration backup",
+    "backupDescription": "Import or export all General, Clock, Weather, Calendar, and HA settings in one file.",
+    "importAll": "Import all settings",
+    "exportAll": "Export all settings",
+    "tokenWarning": "Note: The backup contains the HA address and long-lived access token. Keep it secure.",
+    "exportSecurityWarning": "The exported file contains your Home Assistant long-lived access token. Do not share it. Continue?",
+    "importConfirm": "Importing will overwrite all current system settings. Continue?",
+    "importSuccess": "All system settings were restored successfully.",
+    "importInvalid": "Import failed: This is not a valid Clock Dashboard system settings backup."
   },
   "clockSettings": {
     "color": "Clock Color",
