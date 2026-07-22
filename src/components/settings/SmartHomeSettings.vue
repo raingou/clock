@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HAConfig } from '../../types'
+import type { HAConfig, HAEntity } from '../../types'
 import { ChevronDown, ChevronUp, Code, List, Minus, Plus, PlusCircle } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
@@ -19,6 +19,7 @@ const layoutDraft = ref({ ...haLayoutConfig.value })
 const isJsonMode = ref(false)
 const jsonInput = ref('')
 const entityNameMap = ref<Record<string, string>>({})
+const editingEntity = ref<HAEntity | null>(null)
 
 function refreshEntityNameMap() {
   const nextMap: Record<string, string> = {}
@@ -60,16 +61,23 @@ watch(isJsonMode, (newVal) => {
 })
 
 function addEntity(index?: number) {
+  const entity = { id: '', name: '' }
   if (index !== undefined) {
-    smartConfig.value.entities.splice(index, 0, { id: '', name: '' })
+    smartConfig.value.entities.splice(index, 0, entity)
   }
   else {
-    smartConfig.value.entities.push({ id: '', name: '' })
+    smartConfig.value.entities.push(entity)
   }
+  editingEntity.value = entity
 }
 
 function removeEntity(index: number) {
+  if (editingEntity.value === smartConfig.value.entities[index]) editingEntity.value = null
   smartConfig.value.entities.splice(index, 1)
+}
+
+function toggleEntityEditor(entity: HAEntity) {
+  editingEntity.value = editingEntity.value === entity ? null : entity
 }
 
 function moveEntity(index: number, direction: number) {
@@ -101,6 +109,7 @@ function save() {
 function reset() {
   smartConfig.value = JSON.parse(JSON.stringify(haConfig.value))
   layoutDraft.value = { ...haLayoutConfig.value }
+  editingEntity.value = null
   refreshEntityNameMap()
 }
 
@@ -175,43 +184,59 @@ onMounted(() => {
             </h4>
             <span class="text-sm text-white/20 font-mono">{{ t('smartHomeSettings.entityCount', { count: smartConfig.entities.length }) }}</span>
           </div>
-          <div class="space-y-4">
-            <div v-for="(entity, index) in smartConfig.entities" :key="entity.id || index" class="relative flex space-x-2 items-stretch group">
-              <div class="flex flex-col justify-between opacity-60 flex-shrink-0 border border-white/10 rounded-2xl px-1 py-1.5 bg-white/5">
-                <button class="bg-white/10 rounded-full p-1 text-white/80 hover:text-white hover:bg-white/20 transition-all" @click="moveEntity(index, -1)">
-                  <ChevronUp class="w-4 h-4" />
-                </button>
-                <button class="bg-white/10 rounded-full p-1 text-white/80 hover:text-white hover:bg-white/20 transition-all" @click="moveEntity(index, 1)">
-                  <ChevronDown class="w-4 h-4" />
-                </button>
-              </div>
-              <div class="flex-1">
-                <input
-                  v-model="entity.name"
-                  type="text"
-                  :placeholder="entityNameMap[entity.id] || t('smartHomeSettings.entityNotePlaceholder')"
-                  class="settings-input py-2.5 !rounded-b-none text-sm"
-                >
-                <input
-                  v-model="entity.id"
-                  type="text"
-                  :placeholder="t('smartHomeSettings.entityIdPlaceholder')"
-                  class="settings-input py-2.5 !rounded-t-none text-sm"
-                >
-              </div>
-              <div class="flex flex-col justify-between transition-opacity flex-shrink-0 border border-white/5 rounded-2xl px-1 py-1.5 bg-white/5">
-                <button
-                  class="bg-white/10 rounded-full p-1 text-white/60 transition-all hover:text-white hover:bg-white/20"
-                  @click="addEntity(index)"
-                >
-                  <Plus class="w-4 h-4" />
-                </button>
-                <button
-                  class="bg-white/10 rounded-full p-1 text-white/60 transition-all hover:text-white hover:bg-white/20"
-                  @click="removeEntity(index)"
-                >
-                  <Minus class="w-4 h-4" />
-                </button>
+          <div class="space-y-3">
+            <div v-for="(entity, index) in smartConfig.entities" :key="index" class="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
+              <button
+                type="button"
+                class="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-white/5 transition-colors"
+                @click="toggleEntityEditor(entity)"
+              >
+                <span class="font-medium truncate">
+                  {{ entity.name || entityNameMap[entity.id] || entity.id || t('smartHomeSettings.entityNotePlaceholder') }}
+                </span>
+                <ChevronDown
+                  class="w-5 h-5 flex-shrink-0 text-white/50 transition-transform"
+                  :class="{ 'rotate-180': editingEntity === entity }"
+                />
+              </button>
+
+              <div v-if="editingEntity === entity" class="border-t border-white/10 p-3 flex gap-2 items-stretch">
+                <div class="flex flex-col justify-between opacity-60 flex-shrink-0 border border-white/10 rounded-2xl px-1 py-1.5 bg-white/5">
+                  <button class="bg-white/10 rounded-full p-1 text-white/80 hover:text-white hover:bg-white/20 transition-all" @click="moveEntity(index, -1)">
+                    <ChevronUp class="w-4 h-4" />
+                  </button>
+                  <button class="bg-white/10 rounded-full p-1 text-white/80 hover:text-white hover:bg-white/20 transition-all" @click="moveEntity(index, 1)">
+                    <ChevronDown class="w-4 h-4" />
+                  </button>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <input
+                    v-model="entity.name"
+                    type="text"
+                    :placeholder="entityNameMap[entity.id] || t('smartHomeSettings.entityNotePlaceholder')"
+                    class="settings-input py-2.5 !rounded-b-none text-sm"
+                  >
+                  <input
+                    v-model="entity.id"
+                    type="text"
+                    :placeholder="t('smartHomeSettings.entityIdPlaceholder')"
+                    class="settings-input py-2.5 !rounded-t-none text-sm"
+                  >
+                </div>
+                <div class="flex flex-col justify-between transition-opacity flex-shrink-0 border border-white/5 rounded-2xl px-1 py-1.5 bg-white/5">
+                  <button
+                    class="bg-white/10 rounded-full p-1 text-white/60 transition-all hover:text-white hover:bg-white/20"
+                    @click="addEntity(index)"
+                  >
+                    <Plus class="w-4 h-4" />
+                  </button>
+                  <button
+                    class="bg-white/10 rounded-full p-1 text-white/60 transition-all hover:text-white hover:bg-white/20"
+                    @click="removeEntity(index)"
+                  >
+                    <Minus class="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
             <button class="settings-secondary-btn w-full justify-center border-dashed border-white/10 py-3 !mt-6" @click="addEntity()">
