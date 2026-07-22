@@ -130,11 +130,11 @@ function closeDrawer() {
 
           <!-- Scrollable Area -->
           <div class="flex-1 overflow-y-auto p-6">
-            <GeneralSettings v-if="activeTab === 'general'" ref="generalSettingsRef" />
-            <ClockSettings v-if="activeTab === 'clock'" ref="clockSettingsRef" />
-            <WeatherSettings v-if="activeTab === 'weather'" ref="weatherSettingsRef" />
-            <CalendarSettings v-if="activeTab === 'calendar'" ref="calendarSettingsRef" />
-            <SmartHomeSettings v-if="activeTab === 'smart'" ref="smartHomeSettingsRef" />
+            <GeneralSettings v-show="activeTab === 'general'" ref="generalSettingsRef" />
+            <ClockSettings v-show="activeTab === 'clock'" ref="clockSettingsRef" />
+            <WeatherSettings v-show="activeTab === 'weather'" ref="weatherSettingsRef" />
+            <CalendarSettings v-show="activeTab === 'calendar'" ref="calendarSettingsRef" />
+            <SmartHomeSettings v-show="activeTab === 'smart'" ref="smartHomeSettingsRef" />
           </div>
         </div>
       </div>
