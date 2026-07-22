@@ -20,6 +20,7 @@ const isJsonMode = ref(false)
 const jsonInput = ref('')
 const entityNameMap = ref<Record<string, string>>({})
 const editingEntity = ref<HAEntity | null>(null)
+const isBaseConfigExpanded = ref(false)
 
 function refreshEntityNameMap() {
   const nextMap: Record<string, string> = {}
@@ -139,45 +140,73 @@ onMounted(() => {
       </div>
     </section>
 
-    <section class="flex flex-col space-y-4">
-      <div class="flex items-center justify-between mb-6">
-        <h4 class="text-white/60 uppercase tracking-widest text-sm font-medium">
-          {{ t('smartHomeSettings.baseConfig') }}
-        </h4>
-        <button
-          class="text-[10px] flex items-center px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-all"
-          @click="isJsonMode = !isJsonMode"
-        >
-          <component :is="isJsonMode ? List : Code" class="w-3.5 h-3.5 mr-1.5" />
-          {{ isJsonMode ? t('smartHomeSettings.listMode') : t('smartHomeSettings.jsonMode') }}
-        </button>
+    <section class="flex flex-col space-y-8">
+      <div class="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
+        <div class="flex items-center">
+          <button
+            type="button"
+            class="flex-1 min-w-0 flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-white/5 transition-colors"
+            @click="isBaseConfigExpanded = !isBaseConfigExpanded"
+          >
+            <div class="min-w-0">
+              <h4 class="text-white/70 uppercase tracking-widest text-sm font-medium">
+                {{ t('smartHomeSettings.baseConfig') }}
+              </h4>
+              <span class="block mt-1 text-xs text-white/30 truncate">
+                {{ smartConfig.url || t('smartHomeSettings.haUrlPlaceholder') }}
+              </span>
+            </div>
+            <ChevronDown
+              class="w-5 h-5 flex-shrink-0 text-white/50 transition-transform"
+              :class="{ 'rotate-180': isBaseConfigExpanded }"
+            />
+          </button>
+          <button
+            v-if="isBaseConfigExpanded"
+            class="mr-4 text-[10px] flex items-center px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-all"
+            @click.stop="isJsonMode = !isJsonMode"
+          >
+            <component :is="isJsonMode ? List : Code" class="w-3.5 h-3.5 mr-1.5" />
+            {{ isJsonMode ? t('smartHomeSettings.listMode') : t('smartHomeSettings.jsonMode') }}
+          </button>
+        </div>
+
+        <div v-if="isBaseConfigExpanded" class="border-t border-white/10 p-5">
+          <div v-if="!isJsonMode" class="space-y-6">
+            <div class="space-y-2">
+              <label class="block text-sm opacity-50 mb-2 uppercase tracking-widest">{{ t('smartHomeSettings.haUrl') }}</label>
+              <input
+                v-model="smartConfig.url"
+                type="text"
+                :placeholder="t('smartHomeSettings.haUrlPlaceholder')"
+                class="settings-input"
+              >
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="block text-sm opacity-50 mb-2 uppercase tracking-widest">{{ t('smartHomeSettings.token') }}</label>
+                <TestHAConnection :url="smartConfig.url" :token="smartConfig.token" />
+              </div>
+
+              <input
+                v-model="smartConfig.token"
+                type="password"
+                :placeholder="t('smartHomeSettings.tokenPlaceholder')"
+                class="settings-input"
+              >
+            </div>
+          </div>
+          <textarea
+            v-else
+            v-model="jsonInput"
+            :rows="18"
+            class="settings-input font-mono text-xs leading-relaxed resize-none p-5"
+            placeholder="{ &quot;url&quot;: &quot;...&quot;, &quot;token&quot;: &quot;...&quot;, &quot;entities&quot;: [] }"
+          />
+        </div>
       </div>
 
-      <div v-if="!isJsonMode" class="space-y-6">
-        <div class="space-y-2">
-          <label class="block text-sm opacity-50 mb-2 uppercase tracking-widest">{{ t('smartHomeSettings.haUrl') }}</label>
-          <input
-            v-model="smartConfig.url"
-            type="text"
-            :placeholder="t('smartHomeSettings.haUrlPlaceholder')"
-            class="settings-input"
-          >
-        </div>
-        <div class="space-y-2">
-          <div class="flex items-center justify-between">
-            <label class="block text-sm opacity-50 mb-2 uppercase tracking-widest">{{ t('smartHomeSettings.token') }}</label>
-            <TestHAConnection :url="smartConfig.url" :token="smartConfig.token" />
-          </div>
-
-          <input
-            v-model="smartConfig.token"
-            type="password"
-            :placeholder="t('smartHomeSettings.tokenPlaceholder')"
-            class="settings-input"
-          >
-        </div>
-
-        <div class="space-y-4 pt-4">
+      <div class="space-y-4">
           <div class="flex items-center justify-between">
             <h4 class="text-white/60 uppercase tracking-widest text-sm font-medium">
               {{ t('smartHomeSettings.deviceManagement') }}
@@ -245,16 +274,7 @@ onMounted(() => {
               </div>
             </button>
           </div>
-        </div>
       </div>
-
-      <textarea
-        v-else
-        v-model="jsonInput"
-        :rows="25"
-        class="settings-input font-mono text-xs leading-relaxed resize-none p-5"
-        placeholder="{ &quot;url&quot;: &quot;...&quot;, &quot;token&quot;: &quot;...&quot;, &quot;entities&quot;: [] }"
-      />
     </section>
   </div>
 </template>
