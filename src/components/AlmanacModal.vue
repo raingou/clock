@@ -50,7 +50,7 @@ const showLunar = computed(() => locale.value !== 'en-US')
         <X class="w-6 h-6" />
       </button>
 
-      <div class="space-y-4 max-h-[80vh] overflow-y-auto px-6">
+      <div class="almanac-scroll space-y-4 max-h-[80vh] overflow-y-auto px-6">
         <!-- 头部日期 -->
         <div class="text-2xl">
           {{ dateLabel }} · {{ weekdayLabel }}
@@ -158,3 +158,16 @@ const showLunar = computed(() => locale.value !== 'en-US')
     </div>
   </div>
 </template>
+
+<style scoped>
+.almanac-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.almanac-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+</style>
