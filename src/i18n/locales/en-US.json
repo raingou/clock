@@ -147,6 +147,8 @@
   },
   "calendar": {
     "today": "Today",
+    "detailHolidays": "Public holidays",
+    "detailAnniversaries": "Anniversaries",
     "countryShort": {
       "CN": "CN",
       "VN": "VN",

@@ -147,6 +147,8 @@
   },
   "calendar": {
     "today": "今天",
+    "detailHolidays": "法定假日",
+    "detailAnniversaries": "纪念日",
     "countryShort": {
       "CN": "中",
       "VN": "越",

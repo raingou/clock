@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LunarInfo } from '../types'
+import type { Anniversary, LunarInfo } from '../types'
 import { X } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -8,6 +8,8 @@ const props = defineProps<{
   show: boolean
   date: Date
   lunar: LunarInfo
+  anniversaries: Anniversary[]
+  holidays: Array<{ code: string, name: string }>
 }>()
 
 defineEmits(['close'])
@@ -52,6 +54,30 @@ const showLunar = computed(() => locale.value !== 'en-US')
         <!-- 头部日期 -->
         <div class="text-2xl">
           {{ dateLabel }} · {{ weekdayLabel }}
+        </div>
+
+        <!-- 法定假日与自定义纪念日 -->
+        <div v-if="holidays.length || anniversaries.length" class="border border-white/10 rounded-2xl overflow-hidden">
+          <div v-if="holidays.length" class="p-4" :class="{ 'border-b border-white/10': anniversaries.length }">
+            <div class="text-sm text-white/50 mb-2 uppercase tracking-widest">
+              {{ t('calendar.detailHolidays') }}
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span v-for="item in holidays" :key="`${item.code}-${item.name}`" class="px-3 py-1.5 rounded-full bg-red-400/10 text-red-300">
+                {{ item.code }} · {{ item.name }}
+              </span>
+            </div>
+          </div>
+          <div v-if="anniversaries.length" class="p-4">
+            <div class="text-sm text-white/50 mb-2 uppercase tracking-widest">
+              {{ t('calendar.detailAnniversaries') }}
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span v-for="item in anniversaries" :key="item.id" class="px-3 py-1.5 rounded-full bg-pink-400/10 text-pink-300">
+                {{ item.name }} · {{ t(item.calendarType === 'solar' ? 'calendarSettings.solar' : 'calendarSettings.lunar') }}
+              </span>
+            </div>
+          </div>
         </div>
 
         <template v-if="showLunar">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LunarInfo } from '../types'
+import type { Anniversary, LunarInfo } from '../types'
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -27,6 +27,8 @@ function openSettings() {
 const selectedDay = ref<{
   date: Date
   lunar: LunarInfo
+  anniversaries: Anniversary[]
+  holidays: Array<{ code: string, name: string }>
 } | null>(null)
 
 const year = computed(() => currentMonthDate.value.getFullYear())
@@ -272,6 +274,8 @@ defineExpose({ refreshToday })
       :show="!!selectedDay"
       :date="selectedDay.date"
       :lunar="selectedDay.lunar"
+      :anniversaries="selectedDay.anniversaries"
+      :holidays="selectedDay.holidays"
       @close="selectedDay = null"
     />
   </Teleport>
