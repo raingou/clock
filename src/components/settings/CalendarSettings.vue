@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plus, Trash2 } from 'lucide-vue-next'
+import { ChevronDown, Plus, Trash2 } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -14,6 +14,7 @@ const calendarDraft = ref({
   holidayCountries: [...(calendarConfig.value.holidayCountries || ['CN'])],
   lunarAnniversaries: (calendarConfig.value.lunarAnniversaries || []).map(item => ({ ...item, calendarType: item.calendarType || 'lunar' as const })),
 })
+const editingAnniversaryId = ref<string | null>(null)
 
 const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
 const solarMonths = Array.from({ length: 12 }, (_, index) => `${index + 1}月`)
@@ -37,11 +38,18 @@ function newId() {
 }
 
 function addAnniversary() {
-  calendarDraft.value.lunarAnniversaries.push({ id: newId(), name: '', calendarType: 'lunar', month: 1, day: 1, leapMonth: 'normal' })
+  const id = newId()
+  calendarDraft.value.lunarAnniversaries.push({ id, name: '', calendarType: 'lunar', month: 1, day: 1, leapMonth: 'normal' })
+  editingAnniversaryId.value = id
 }
 
 function removeAnniversary(id: string) {
   calendarDraft.value.lunarAnniversaries = calendarDraft.value.lunarAnniversaries.filter(item => item.id !== id)
+  if (editingAnniversaryId.value === id) editingAnniversaryId.value = null
+}
+
+function toggleAnniversaryEditor(id: string) {
+  editingAnniversaryId.value = editingAnniversaryId.value === id ? null : id
 }
 
 function save() {
@@ -49,6 +57,7 @@ function save() {
 }
 
 function reset() {
+  editingAnniversaryId.value = null
   calendarDraft.value = {
     ...calendarConfig.value,
     holidayCountries: [...(calendarConfig.value.holidayCountries || ['CN'])],
@@ -117,26 +126,42 @@ defineExpose({ save, reset })
       </h4>
 
       <div class="space-y-3">
-        <div v-for="item in calendarDraft.lunarAnniversaries" :key="item.id" class="grid grid-cols-[repeat(3,minmax(0,1fr))_auto] gap-2 items-center">
-          <input v-model="item.name" class="settings-input min-w-0 col-span-4" :placeholder="t('calendarSettings.anniversaryName')">
-          <select v-model="item.calendarType" class="settings-input min-w-0">
-            <option value="lunar">{{ t('calendarSettings.lunar') }}</option>
-            <option value="solar">{{ t('calendarSettings.solar') }}</option>
-          </select>
-          <select v-model.number="item.month" class="settings-input min-w-0">
-            <option v-for="(label, index) in item.calendarType === 'solar' ? solarMonths : lunarMonths" :key="label" :value="index + 1">{{ label }}</option>
-          </select>
-          <select v-model.number="item.day" class="settings-input min-w-0">
-            <option v-for="(label, index) in item.calendarType === 'solar' ? solarDays : lunarDays" :key="label" :value="index + 1">{{ label }}</option>
-          </select>
-          <button type="button" class="p-3 text-red-300 hover:bg-white/10 rounded-xl" @click="removeAnniversary(item.id)">
-            <Trash2 class="w-5 h-5" />
+        <div v-for="item in calendarDraft.lunarAnniversaries" :key="item.id" class="rounded-2xl bg-white/[0.03] border border-white/5 overflow-hidden">
+          <button
+            type="button"
+            class="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-white/5 transition-colors"
+            @click="toggleAnniversaryEditor(item.id)"
+          >
+            <span class="font-medium truncate" :class="item.name ? 'text-white/90' : 'text-white/30'">
+              {{ item.name || t('calendarSettings.anniversaryName') }}
+            </span>
+            <ChevronDown
+              class="w-5 h-5 flex-shrink-0 text-white/40 transition-transform"
+              :class="{ 'rotate-180': editingAnniversaryId === item.id }"
+            />
           </button>
-          <select v-if="item.calendarType !== 'solar'" v-model="item.leapMonth" class="settings-input col-span-4">
-            <option value="normal">{{ t('calendarSettings.normalMonth') }}</option>
-            <option value="leap">{{ t('calendarSettings.leapMonth') }}</option>
-            <option value="both">{{ t('calendarSettings.bothMonths') }}</option>
-          </select>
+
+          <div v-if="editingAnniversaryId === item.id" class="grid grid-cols-[repeat(3,minmax(0,1fr))_auto] gap-2 items-center px-3 pb-3">
+            <input v-model="item.name" class="settings-input min-w-0 col-span-4" :placeholder="t('calendarSettings.anniversaryName')">
+            <select v-model="item.calendarType" class="settings-input min-w-0">
+              <option value="lunar">{{ t('calendarSettings.lunar') }}</option>
+              <option value="solar">{{ t('calendarSettings.solar') }}</option>
+            </select>
+            <select v-model.number="item.month" class="settings-input min-w-0">
+              <option v-for="(label, index) in item.calendarType === 'solar' ? solarMonths : lunarMonths" :key="label" :value="index + 1">{{ label }}</option>
+            </select>
+            <select v-model.number="item.day" class="settings-input min-w-0">
+              <option v-for="(label, index) in item.calendarType === 'solar' ? solarDays : lunarDays" :key="label" :value="index + 1">{{ label }}</option>
+            </select>
+            <button type="button" class="p-3 text-red-300 hover:bg-white/10 rounded-xl" @click="removeAnniversary(item.id)">
+              <Trash2 class="w-5 h-5" />
+            </button>
+            <select v-if="item.calendarType !== 'solar'" v-model="item.leapMonth" class="settings-input col-span-4">
+              <option value="normal">{{ t('calendarSettings.normalMonth') }}</option>
+              <option value="leap">{{ t('calendarSettings.leapMonth') }}</option>
+              <option value="both">{{ t('calendarSettings.bothMonths') }}</option>
+            </select>
+          </div>
         </div>
         <button type="button" class="settings-secondary-btn" @click="addAnniversary">
           <Plus class="w-4 h-4" /> {{ t('calendarSettings.addAnniversary') }}
