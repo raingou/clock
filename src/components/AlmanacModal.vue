@@ -56,8 +56,18 @@ const showLunar = computed(() => locale.value !== 'en-US')
           {{ dateLabel }} · {{ weekdayLabel }}
         </div>
 
-        <!-- 法定假日与自定义纪念日 -->
-        <div v-if="holidays.length || anniversaries.length" class="border border-white/10 rounded-2xl overflow-hidden">
+        <!-- 节日节气、法定假日与自定义纪念日 -->
+        <div v-if="lunar.festival || holidays.length || anniversaries.length" class="border border-white/10 rounded-2xl overflow-hidden">
+          <div v-if="lunar.festival" class="p-4" :class="{ 'border-b border-white/10': holidays.length || anniversaries.length }">
+            <div class="text-sm text-white/50 mb-2 uppercase tracking-widest">
+              {{ t('calendar.detailFestivals') }}
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 rounded-full bg-blue-400/10 text-blue-300">
+                {{ lunar.festival }}
+              </span>
+            </div>
+          </div>
           <div v-if="holidays.length" class="p-4" :class="{ 'border-b border-white/10': anniversaries.length }">
             <div class="text-sm text-white/50 mb-2 uppercase tracking-widest">
               {{ t('calendar.detailHolidays') }}
@@ -82,16 +92,8 @@ const showLunar = computed(() => locale.value !== 'en-US')
 
         <template v-if="showLunar">
           <!-- 农历信息 -->
-          <div class="text-xl flex flex-wrap space-x-2">
-            <span>
-              {{ lunar.year }}({{ lunar.yearShengxiao }})年 {{ lunar.month }}({{ lunar.monthGanzhi }})月 {{ lunar.date }}({{ lunar.dayGanzhi }})日
-            </span>
-            <span v-if="lunar.festival" class="text-blue-400">
-              · {{ lunar.festival }}
-            </span>
-            <span v-if="lunar.holiday" :class="lunar.holiday === '休' ? 'text-red-400' : 'text-orange-400'">
-              · {{ lunar.holiday }}
-            </span>
+          <div class="text-xl">
+            {{ lunar.year }}({{ lunar.yearShengxiao }})年 {{ lunar.month }}({{ lunar.monthGanzhi }})月 {{ lunar.date }}({{ lunar.dayGanzhi }})日
           </div>
 
           <!-- 宜忌内容 -->

@@ -156,6 +156,7 @@
   },
   "calendar": {
     "today": "今天",
+    "detailFestivals": "節日 / 節氣",
     "detailHolidays": "法定假日",
     "detailAnniversaries": "紀念日",
     "countryShort": {

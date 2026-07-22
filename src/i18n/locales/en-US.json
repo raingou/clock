@@ -156,6 +156,7 @@
   },
   "calendar": {
     "today": "Today",
+    "detailFestivals": "Festival / Solar term",
     "detailHolidays": "Public holidays",
     "detailAnniversaries": "Anniversaries",
     "countryShort": {
