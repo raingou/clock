@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Anniversary, LunarInfo } from '../types'
-import { useIdle } from '@vueuse/core'
+import { onClickOutside, useIdle } from '@vueuse/core'
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -19,11 +19,18 @@ const currentMonthDate = ref(new Date())
 const today = ref(new Date())
 const remoteHolidayMap = ref<Record<string, Array<{ code: string, name: string }>>>({})
 const showSettingsButton = ref(true)
+const showDesktopMonthPicker = ref(false)
+const desktopMonthPickerRef = ref<HTMLElement | null>(null)
+const pickerYear = ref(currentMonthDate.value.getFullYear())
 const { idle } = useIdle(5 * 1000)
 let holidayRequestId = 0
 
 watch(idle, (isIdle) => {
   showSettingsButton.value = !isIdle
+})
+
+onClickOutside(desktopMonthPickerRef, () => {
+  showDesktopMonthPicker.value = false
 })
 
 function openSettings() {
@@ -127,6 +134,32 @@ const monthPickerValue = computed({
   },
 })
 
+const desktopMonthNames = computed(() => Array.from({ length: 12 }, (_, index) => {
+  return new Intl.DateTimeFormat(locale.value, { month: 'short' }).format(new Date(2020, index, 1))
+}))
+
+function toggleDesktopMonthPicker() {
+  pickerYear.value = year.value
+  showDesktopMonthPicker.value = !showDesktopMonthPicker.value
+}
+
+function changePickerYear(delta: number) {
+  const baseYear = Number.isFinite(pickerYear.value) ? pickerYear.value : year.value
+  pickerYear.value = Math.min(2100, Math.max(1900, Math.round(baseYear + delta)))
+}
+
+function selectDesktopMonth(selectedMonth: number) {
+  const selectedYear = Number.isFinite(pickerYear.value) ? Math.round(pickerYear.value) : year.value
+  pickerYear.value = Math.min(2100, Math.max(1900, selectedYear))
+  currentMonthDate.value = new Date(pickerYear.value, selectedMonth, 1)
+  showDesktopMonthPicker.value = false
+}
+
+function selectCurrentMonth() {
+  goToToday()
+  showDesktopMonthPicker.value = false
+}
+
 const showLunar = computed(() => locale.value !== 'en-US')
 const selectedHolidayCountries = computed(() => calendarConfig.value.holidayCountries || ['CN'])
 
@@ -221,7 +254,8 @@ defineExpose({ refreshToday })
 <template>
   <div class="full-screen-calendar text-white">
     <div class="flex items-center justify-between w-full mb-[2vh] px-[2vh]">
-      <label class="relative text-left cursor-pointer" :aria-label="monthLabel">
+      <!-- 手机和平板保留系统原生月份选择器 -->
+      <label class="month-picker-native relative text-left cursor-pointer" :aria-label="monthLabel">
         <h2 class="text-[6vh] leading-[6vh] font-bold tracking-widest">
           {{ monthLabel }}
         </h2>
@@ -234,6 +268,59 @@ defineExpose({ refreshToday })
           :aria-label="monthLabel"
         >
       </label>
+
+      <!-- 桌面端使用与页面一致的深色年月选择面板 -->
+      <div ref="desktopMonthPickerRef" class="month-picker-desktop relative text-left">
+        <button type="button" class="block" :aria-expanded="showDesktopMonthPicker" @click="toggleDesktopMonthPicker">
+          <h2 class="text-[6vh] leading-[6vh] font-bold tracking-widest hover:text-blue-200 transition-colors">
+            {{ monthLabel }}
+          </h2>
+        </button>
+
+        <div
+          v-if="showDesktopMonthPicker"
+          class="absolute left-0 top-[calc(100%+1rem)] z-50 w-[24rem] rounded-2xl border border-white/15 bg-neutral-900/95 p-4 shadow-2xl backdrop-blur-xl"
+        >
+          <div class="flex items-center justify-between gap-3 mb-4">
+            <button type="button" class="month-picker-nav" @click="changePickerYear(-1)">
+              <ChevronLeft class="w-5 h-5" />
+            </button>
+            <input
+              v-model.number="pickerYear"
+              type="number"
+              min="1900"
+              max="2100"
+              class="w-28 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-center text-xl font-semibold text-white outline-none focus:border-blue-300/70"
+            >
+            <button type="button" class="month-picker-nav" @click="changePickerYear(1)">
+              <ChevronRight class="w-5 h-5" />
+            </button>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2">
+            <button
+              v-for="(name, index) in desktopMonthNames"
+              :key="index"
+              type="button"
+              class="rounded-xl border px-3 py-3 text-sm font-medium transition-colors"
+              :class="pickerYear === year && index === month
+                ? 'border-blue-300 bg-blue-400/25 text-blue-100'
+                : 'border-white/10 bg-white/5 text-white/80 hover:border-white/30 hover:bg-white/10'"
+              @click="selectDesktopMonth(index)"
+            >
+              {{ name }}
+            </button>
+          </div>
+
+          <button
+            type="button"
+            class="mt-4 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-blue-300 hover:bg-white/10 transition-colors"
+            @click="selectCurrentMonth"
+          >
+            {{ t('calendar.today') }}
+          </button>
+        </div>
+      </div>
       <div class="flex items-center space-x-3">
         <button class="p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300" @click="changeMonth(-1)">
           <ChevronLeft class="w-[3.1vh] h-[3.1vh] " />
@@ -317,6 +404,41 @@ defineExpose({ refreshToday })
   flex-direction: column;
   padding: 4vh;
   box-sizing: border-box;
+}
+
+.month-picker-native {
+  display: none;
+}
+
+.month-picker-desktop {
+  display: block;
+}
+
+.month-picker-nav {
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.month-picker-nav:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 767px), (hover: none), (pointer: coarse) {
+  .month-picker-native {
+    display: block;
+  }
+
+  .month-picker-desktop {
+    display: none;
+  }
 }
 
 .calendar-grid {
