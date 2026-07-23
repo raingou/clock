@@ -174,9 +174,11 @@ watch(idle, (newIdle) => {
   font-size: 16vh;
   line-height: 1.1;
   font-weight: 800;
-  background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.7));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
   margin-right: 2vh;
 }
 
