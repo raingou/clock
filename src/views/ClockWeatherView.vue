@@ -315,8 +315,23 @@ watch(idle, (newIdle) => {
 
 /* Z Fold 外屏等特别窄的屏幕 */
 @media (max-width: 420px) and (orientation: portrait) {
+  .glass-panel {
+    height: 100dvh;
+    min-height: 0;
+    padding: max(0.65rem, env(safe-area-inset-top)) 0.5rem max(0.65rem, env(safe-area-inset-bottom));
+    gap: clamp(0.35rem, 1.5vh, 0.8rem);
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .date-header {
+    flex: 0 1 auto;
+    padding: 0;
+  }
+
   .date-primary {
     align-content: center;
+    row-gap: 0.2rem;
   }
 
   .date-meta {
@@ -329,14 +344,53 @@ watch(idle, (newIdle) => {
     margin-top: 0.25rem;
   }
 
+  .date-day-big {
+    font-size: clamp(3.4rem, 21vw, 5rem);
+    margin-right: 0.6rem;
+  }
+
+  .weekday-label,
+  .lunar-date-label {
+    font-size: clamp(1.35rem, 7vw, 1.85rem);
+  }
+
+  .year-label,
+  .lunar-year-label {
+    font-size: clamp(0.9rem, 4.5vw, 1.2rem);
+  }
+
   .clock-display,
   .clock-only-mode .clock-display {
-    font-size: 42vw;
+    flex: 0 1 auto;
+    margin: 0;
+    font-size: min(34vh, 39vw);
   }
 
   .clock-display.with-seconds,
   .clock-only-mode .clock-display.with-seconds {
-    font-size: 26vw;
+    font-size: min(22vh, 23vw);
+  }
+}
+
+/* 很矮的窄屏（浏览器地址栏和底栏同时显示）进一步按高度收缩。 */
+@media (max-width: 420px) and (orientation: portrait) and (max-height: 760px) {
+  .date-day-big {
+    font-size: min(17vw, 3.8rem);
+  }
+
+  .weekday-label,
+  .lunar-date-label {
+    font-size: min(6vw, 1.55rem);
+  }
+
+  .year-label,
+  .lunar-year-label {
+    font-size: min(4vw, 1rem);
+  }
+
+  .clock-display,
+  .clock-only-mode .clock-display {
+    font-size: min(29vh, 37vw);
   }
 }
 </style>

@@ -286,10 +286,10 @@ defineExpose({ refreshToday })
 
 <template>
   <div class="full-screen-calendar text-white">
-    <div class="flex items-center justify-between w-full mb-[2vh] px-[2vh]">
+    <div class="calendar-toolbar flex items-center justify-between w-full mb-[2vh] px-[2vh]">
       <!-- 手机和平板保留系统原生月份选择器 -->
       <label class="month-picker-native relative text-left cursor-pointer" :aria-label="monthLabel">
-        <h2 class="text-[6vh] leading-[6vh] font-bold tracking-widest">
+        <h2 class="calendar-month-title text-[6vh] leading-[6vh] font-bold tracking-widest">
           {{ monthLabel }}
         </h2>
         <input
@@ -354,21 +354,21 @@ defineExpose({ refreshToday })
           </button>
         </div>
       </div>
-      <div class="flex items-center space-x-3">
-        <button class="p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300" @click="changeMonth(-1)">
+      <div class="calendar-actions flex items-center space-x-3">
+        <button class="calendar-nav-button p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300" @click="changeMonth(-1)">
           <ChevronLeft class="w-[3.1vh] h-[3.1vh] " />
         </button>
         <button
-          class="px-[2.5vh] py-[1.4vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300 text-[2.2vh] leading-none font-medium"
+          class="calendar-today-button px-[2.5vh] py-[1.4vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300 text-[2.2vh] leading-none font-medium"
           @click="goToToday"
         >
           {{ t('calendar.today') }}
         </button>
-        <button class="p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300" @click="changeMonth(1)">
+        <button class="calendar-nav-button p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300" @click="changeMonth(1)">
           <ChevronRight class="w-[3.1vh] h-[3.1vh] " />
         </button>
         <button
-          class="p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300 ml-2"
+          class="calendar-settings-button p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300 ml-2"
           :class="{ 'opacity-0 pointer-events-none': !showSettingsButton }"
           @click="openSettings"
         >
@@ -488,10 +488,14 @@ defineExpose({ refreshToday })
   gap: 4px;
   flex: 1;
   overflow: hidden;
+  min-width: 0;
+  min-height: 0;
 }
 
 .calendar-swipe-area {
   touch-action: none;
+  min-width: 0;
+  min-height: 0;
 }
 
 .month-slide-up-enter-active,
@@ -540,5 +544,115 @@ defineExpose({ refreshToday })
   text-transform: uppercase;
   letter-spacing: 0.1em;
   opacity: 0.5;
+}
+
+/* 折叠屏外屏和普通窄屏：工具栏、7 列日期共同按可用宽度收缩。 */
+@media (max-width: 480px) and (orientation: portrait) {
+  .full-screen-calendar {
+    padding: max(0.75rem, env(safe-area-inset-top)) 0.5rem max(0.5rem, env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+
+  .calendar-toolbar {
+    flex: none;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0 0.15rem;
+  }
+
+  .month-picker-native {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .calendar-month-title {
+    white-space: nowrap;
+    font-size: clamp(1.65rem, 9vw, 2.35rem);
+    line-height: 1.05;
+    letter-spacing: 0.04em;
+  }
+
+  .calendar-actions {
+    flex: 0 0 auto;
+    gap: 0.3rem;
+  }
+
+  .calendar-actions.space-x-3 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0;
+  }
+
+  .calendar-nav-button,
+  .calendar-settings-button {
+    padding: 0.55rem;
+  }
+
+  .calendar-nav-button svg,
+  .calendar-settings-button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .calendar-today-button {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.9rem;
+  }
+
+  .calendar-settings-button {
+    margin-left: 0;
+  }
+
+  .calendar-swipe-area {
+    height: auto;
+    flex: 1 1 0%;
+  }
+
+  .calendar-swipe-area > .grid {
+    margin-bottom: 0.25rem;
+  }
+
+  .calendar-header-day {
+    padding: clamp(0.55rem, 2.2vh, 1rem) 0;
+    font-size: clamp(0.8rem, 4vw, 1.05rem);
+    letter-spacing: 0;
+  }
+
+  .calendar-grid {
+    gap: 3px;
+  }
+
+  .calendar-day {
+    min-width: 0;
+    border-radius: 9px;
+  }
+
+  .day-number-wrapper {
+    width: 100%;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+  }
+
+  .day-number-wrapper > span:first-child {
+    font-size: clamp(1.45rem, 7.8vw, 2.1rem);
+  }
+
+  .lunar-text {
+    width: 100%;
+    margin-top: clamp(0.3rem, 1vh, 0.55rem);
+    padding: 0 0.1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: clamp(0.68rem, 3.2vw, 0.9rem);
+  }
+}
+
+@media (max-width: 360px) and (orientation: portrait) {
+  .calendar-settings-button {
+    display: none;
+  }
+
+  .calendar-month-title {
+    font-size: clamp(1.45rem, 8.5vw, 1.9rem);
+  }
 }
 </style>
