@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useIdle } from '@vueuse/core'
 import { AirVent, AlertTriangle, Blinds, Droplets, Fan, Lightbulb, Loader2, Power, Settings, Thermometer, Tv, Zap } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, watch } from 'vue'
@@ -14,8 +15,14 @@ const { entitiesStates } = storeToRefs(haStore)
 const { t } = useI18n()
 
 const isConnecting = ref(false)
+const showSettingsButton = ref(true)
+const { idle } = useIdle(5 * 1000)
 
 const loadingStates = ref<Record<string, boolean>>({})
+
+watch(idle, (isIdle) => {
+  showSettingsButton.value = !isIdle
+})
 
 function openSettings() {
   activeTab.value = 'smart'
@@ -170,7 +177,11 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
           <AlertTriangle class="w-[4vh] h-[4vh] text-red-400" />
           <span class="text-red-400 text-[4vh]">{{ connectErrorText }}</span>
         </div>
-        <button class="p-[1.5vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all" @click="openSettings">
+        <button
+          class="p-[1.5vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300"
+          :class="{ 'opacity-0 pointer-events-none': !showSettingsButton }"
+          @click="openSettings"
+        >
           <Settings class="w-[3vh] h-[3vh]" />
         </button>
       </div>

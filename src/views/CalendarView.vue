@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Anniversary, LunarInfo } from '../types'
+import { useIdle } from '@vueuse/core'
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -17,7 +18,13 @@ const { t, locale } = useI18n()
 const currentMonthDate = ref(new Date())
 const today = ref(new Date())
 const remoteHolidayMap = ref<Record<string, Array<{ code: string, name: string }>>>({})
+const showSettingsButton = ref(true)
+const { idle } = useIdle(5 * 1000)
 let holidayRequestId = 0
+
+watch(idle, (isIdle) => {
+  showSettingsButton.value = !isIdle
+})
 
 function openSettings() {
   activeTab.value = 'calendar'
@@ -106,6 +113,18 @@ const weekHeaders = computed(() => {
 const monthLabel = computed(() => {
   const formatter = new Intl.DateTimeFormat(locale.value, { year: 'numeric', month: 'long' })
   return formatter.format(currentMonthDate.value)
+})
+
+const monthPickerValue = computed({
+  get: () => `${year.value}-${String(month.value + 1).padStart(2, '0')}`,
+  set: (value: string) => {
+    const match = /^(\d{4})-(\d{2})$/.exec(value)
+    if (!match) return
+    const selectedYear = Number(match[1])
+    const selectedMonth = Number(match[2])
+    if (selectedYear < 1900 || selectedYear > 2100 || selectedMonth < 1 || selectedMonth > 12) return
+    currentMonthDate.value = new Date(selectedYear, selectedMonth - 1, 1)
+  },
 })
 
 const showLunar = computed(() => locale.value !== 'en-US')
@@ -202,11 +221,19 @@ defineExpose({ refreshToday })
 <template>
   <div class="full-screen-calendar text-white">
     <div class="flex items-center justify-between w-full mb-[2vh] px-[2vh]">
-      <div class="text-left">
+      <label class="relative text-left cursor-pointer" :aria-label="monthLabel">
         <h2 class="text-[6vh] leading-[6vh] font-bold tracking-widest">
           {{ monthLabel }}
         </h2>
-      </div>
+        <input
+          v-model="monthPickerValue"
+          type="month"
+          min="1900-01"
+          max="2100-12"
+          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          :aria-label="monthLabel"
+        >
+      </label>
       <div class="flex items-center space-x-3">
         <button class="p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300" @click="changeMonth(-1)">
           <ChevronLeft class="w-[3.1vh] h-[3.1vh] " />
@@ -222,6 +249,7 @@ defineExpose({ refreshToday })
         </button>
         <button
           class="p-[1.1vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300 ml-2"
+          :class="{ 'opacity-0 pointer-events-none': !showSettingsButton }"
           @click="openSettings"
         >
           <Settings class="w-[3.1vh] h-[3.1vh]" />
