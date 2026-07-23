@@ -316,16 +316,19 @@ watch(idle, (newIdle) => {
 /* Z Fold 外屏等特别窄的屏幕 */
 @media (max-width: 420px) and (orientation: portrait) {
   .glass-panel {
-    height: 100dvh;
+    display: grid;
+    grid-template-rows: minmax(0, 27fr) minmax(0, 43fr) minmax(0, 30fr);
+    align-items: center;
+    width: 100%;
+    height: 100%;
     min-height: 0;
-    padding: max(0.65rem, env(safe-area-inset-top)) 0.5rem max(0.65rem, env(safe-area-inset-bottom));
-    gap: clamp(0.35rem, 1.5vh, 0.8rem);
-    justify-content: space-between;
+    padding: max(0.45rem, env(safe-area-inset-top)) 0.5rem max(0.35rem, env(safe-area-inset-bottom));
+    gap: 0;
     overflow: hidden;
   }
 
   .date-header {
-    flex: 0 1 auto;
+    align-self: center;
     padding: 0;
   }
 
@@ -345,37 +348,52 @@ watch(idle, (newIdle) => {
   }
 
   .date-day-big {
-    font-size: clamp(3.4rem, 21vw, 5rem);
+    font-size: clamp(3rem, 18vw, 4.25rem);
     margin-right: 0.6rem;
   }
 
   .weekday-label,
   .lunar-date-label {
-    font-size: clamp(1.35rem, 7vw, 1.85rem);
+    font-size: clamp(1.2rem, 6vw, 1.6rem);
   }
 
   .year-label,
   .lunar-year-label {
-    font-size: clamp(0.9rem, 4.5vw, 1.2rem);
+    font-size: clamp(0.82rem, 4.1vw, 1.05rem);
   }
 
   .clock-display,
   .clock-only-mode .clock-display {
-    flex: 0 1 auto;
+    align-self: center;
     margin: 0;
-    font-size: min(34vh, 39vw);
+    font-size: min(28vh, 34vw);
   }
 
   .clock-display.with-seconds,
   .clock-only-mode .clock-display.with-seconds {
     font-size: min(22vh, 23vw);
   }
+
+  .glass-panel > :deep(#weather-container) {
+    align-self: stretch;
+  }
+
+  .glass-panel > button {
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.55rem;
+  }
+
+  .glass-panel > button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 }
 
 /* 很矮的窄屏（浏览器地址栏和底栏同时显示）进一步按高度收缩。 */
 @media (max-width: 420px) and (orientation: portrait) and (max-height: 760px) {
   .date-day-big {
-    font-size: min(17vw, 3.8rem);
+    font-size: min(16vw, 3.5rem);
   }
 
   .weekday-label,
@@ -390,7 +408,7 @@ watch(idle, (newIdle) => {
 
   .clock-display,
   .clock-only-mode .clock-display {
-    font-size: min(29vh, 37vw);
+    font-size: min(25vh, 32vw);
   }
 }
 </style>

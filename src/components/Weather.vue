@@ -334,23 +334,27 @@ onUnmounted(() => {
 /* 折叠屏外屏：天气两行保持完整，并随宽高共同缩放。 */
 @media (max-width: 420px) and (orientation: portrait) {
   #weather-container {
-    padding: 0 0.25rem;
-    gap: clamp(0.35rem, 1vh, 0.65rem) 0.4rem;
+    height: 100%;
+    padding: 0 0.35rem;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    grid-template-rows: minmax(0, 58fr) minmax(0, 42fr);
+    gap: 0 0.35rem;
+    align-content: stretch;
   }
 
   #weather-icon {
-    width: clamp(2.35rem, 11vw, 3.25rem);
-    height: clamp(2.35rem, 11vw, 3.25rem);
+    width: clamp(2.1rem, 10vw, 2.85rem);
+    height: clamp(2.1rem, 10vw, 2.85rem);
   }
 
   #weather-text {
-    font-size: clamp(0.95rem, 4.5vw, 1.25rem);
+    font-size: clamp(0.88rem, 4.1vw, 1.1rem);
   }
 
   #location-text {
-    max-width: 45vw;
-    margin-top: 0.25rem;
-    font-size: clamp(0.58rem, 2.6vw, 0.78rem);
+    max-width: 49vw;
+    margin-top: 0.15rem;
+    font-size: clamp(0.55rem, 2.4vw, 0.72rem);
   }
 
   .precipitation-probability-val {
@@ -358,27 +362,33 @@ onUnmounted(() => {
   }
 
   #temp-val {
-    font-size: clamp(2.8rem, 14vw, 4rem);
+    font-size: clamp(2.4rem, 12vw, 3.35rem);
   }
 
   .temp-unit {
-    margin-bottom: 1.8rem;
-    font-size: clamp(1rem, 4.8vw, 1.3rem);
+    margin-bottom: 1.45rem;
+    font-size: clamp(0.9rem, 4.2vw, 1.15rem);
   }
 
   #temp-max,
   #temp-min {
-    font-size: clamp(0.85rem, 4vw, 1.1rem);
+    font-size: clamp(0.78rem, 3.6vw, 0.98rem);
   }
 
   .environment-data {
+    align-self: center;
     gap: 0.25rem;
-    font-size: clamp(0.9rem, 4.5vw, 1.15rem);
+    font-size: clamp(0.82rem, 4vw, 1rem);
   }
 
   .environment-data-icon {
-    width: 1.35rem;
-    height: 1.35rem;
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  #humidity-val,
+  #aqi-val {
+    margin-bottom: 0.45rem;
   }
 
   #aqi-label {

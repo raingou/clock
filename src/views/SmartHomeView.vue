@@ -155,10 +155,10 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
 </script>
 
 <template>
-  <div class="glass-panel py-[6vh] text-white h-full overflow-y-auto w-full">
-    <div class="flex items-center justify-between w-full mb-[2vh] px-[5vh]">
-      <div class="flex items-baseline space-x-6">
-        <h2 class="text-[4vh] font-bold tracking-widest text-nowrap leading-[5vh]">
+  <div class="smart-home-panel glass-panel py-[6vh] text-white h-full overflow-y-auto w-full">
+    <div class="smart-home-toolbar flex items-center justify-between w-full mb-[2vh] px-[5vh]">
+      <div class="smart-home-heading flex items-baseline space-x-6">
+        <h2 class="smart-home-title text-[4vh] font-bold tracking-widest text-nowrap leading-[5vh]">
           {{ t('smartHome.title') }}
         </h2>
         <div v-if="headerClimateInfo" class="flex items-center space-x-6 opacity-60">
@@ -178,7 +178,7 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
           <span class="text-red-400 text-[4vh]">{{ connectErrorText }}</span>
         </div>
         <button
-          class="p-[1.5vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300"
+          class="smart-home-settings p-[1.5vh] bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-all duration-300"
           :class="{ 'opacity-0 pointer-events-none': !showSettingsButton }"
           @click="openSettings"
         >
@@ -266,5 +266,97 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
 
 .glass-panel {
   max-width: 1200px;
+}
+
+/* 折叠屏外屏与普通窄屏：不再沿用桌面 3/4/5 列，确保名称完整可见。 */
+@media (max-width: 480px) and (orientation: portrait) {
+  .smart-home-panel {
+    max-width: 100vw;
+    padding: max(1rem, env(safe-area-inset-top)) 0.75rem max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .smart-home-toolbar {
+    margin-bottom: 0.75rem;
+    padding: 0 0.25rem;
+  }
+
+  .smart-home-heading {
+    min-width: 0;
+    gap: 0.5rem;
+  }
+
+  .smart-home-heading.space-x-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0;
+  }
+
+  .smart-home-title {
+    font-size: clamp(1.55rem, 8vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+  }
+
+  .smart-home-heading > div:last-child {
+    display: none;
+  }
+
+  .smart-home-settings {
+    padding: 0.65rem;
+  }
+
+  .smart-home-settings svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  #ha-entities {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem;
+    padding: 0 0.25rem;
+  }
+
+  .ha-card {
+    min-width: 0;
+    min-height: 8.5rem;
+    margin: 0;
+    padding: 1rem;
+    border-radius: 1.25rem;
+    justify-content: space-between;
+  }
+
+  .ha-card > div:first-child {
+    margin-bottom: 0.75rem;
+  }
+
+  .ha-card > div:first-child > div:first-child {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .ha-card > div:first-child > div:first-child svg {
+    width: 1.55rem;
+    height: 1.55rem;
+  }
+
+  .ha-card .font-bold {
+    font-size: clamp(0.95rem, 4.4vw, 1.15rem);
+    line-height: 1.3;
+  }
+
+  .ha-card .tracking-widest {
+    margin-top: 0.25rem;
+    font-size: clamp(0.72rem, 3.2vw, 0.9rem);
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (max-width: 340px) and (orientation: portrait) {
+  #ha-entities {
+    gap: 0.45rem;
+  }
+
+  .ha-card {
+    min-height: 7.75rem;
+    padding: 0.8rem;
+  }
 }
 </style>
