@@ -3,7 +3,7 @@ import type { Anniversary, LunarInfo } from '../types'
 import { onClickOutside, useIdle } from '@vueuse/core'
 import { ChevronLeft, ChevronRight, Settings } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AlmanacModal from '../components/AlmanacModal.vue'
 import { useConfigStore } from '../stores/config'
@@ -29,6 +29,9 @@ let calendarTouchStartX = 0
 let calendarTouchStartY = 0
 let monthSwipeLockedUntil = 0
 let suppressDayClickUntil = 0
+let calendarWheelDelta = 0
+let calendarWheelGestureTriggered = false
+let calendarWheelResetTimer: number | undefined
 
 watch(idle, (isIdle) => {
   showSettingsButton.value = !isIdle
@@ -256,6 +259,34 @@ function handleCalendarTouchEnd(event: TouchEvent) {
   changeMonth(diffY > 0 ? 1 : -1)
 }
 
+function handleCalendarWheel(event: WheelEvent) {
+  if (selectedDay.value || showDrawer.value || showDesktopMonthPicker.value) return
+  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
+
+  /* 将行/页滚动统一换算成像素，兼容鼠标滚轮和笔记本触控板。 */
+  const multiplier = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+    ? 16
+    : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1
+  const delta = event.deltaY * multiplier
+
+  window.clearTimeout(calendarWheelResetTimer)
+  calendarWheelResetTimer = window.setTimeout(() => {
+    calendarWheelDelta = 0
+    calendarWheelGestureTriggered = false
+  }, 180)
+
+  /* 一次连续滚动手势只切换一个月，避免触控板惯性连续跳月。 */
+  if (calendarWheelGestureTriggered) return
+  if (calendarWheelDelta && Math.sign(calendarWheelDelta) !== Math.sign(delta)) calendarWheelDelta = 0
+  calendarWheelDelta += delta
+  if (Math.abs(calendarWheelDelta) < 60) return
+
+  calendarWheelGestureTriggered = true
+  calendarWheelDelta = 0
+  suppressDayClickUntil = Date.now() + 250
+  changeMonth(delta > 0 ? 1 : -1)
+}
+
 function handleDayClick(day: any) {
   if (Date.now() < suppressDayClickUntil) return
   if (!showLunar.value) return
@@ -280,6 +311,10 @@ function refreshToday() {
     currentMonthDate.value = new Date()
   }
 }
+
+onUnmounted(() => {
+  window.clearTimeout(calendarWheelResetTimer)
+})
 
 defineExpose({ refreshToday })
 </script>
@@ -381,6 +416,7 @@ defineExpose({ refreshToday })
       class="calendar-swipe-area h-[calc(100vh-13.5vh)] flex flex-col w-full"
       @touchstart="handleCalendarTouchStart"
       @touchend="handleCalendarTouchEnd"
+      @wheel.prevent="handleCalendarWheel"
     >
       <div class="grid grid-cols-7 mb-2">
         <div v-for="d in weekHeaders" :key="d" class="calendar-header-day text-[2.6vh] leading-none font-bold">
