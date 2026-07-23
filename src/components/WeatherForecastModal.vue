@@ -138,7 +138,7 @@ watch(idle, (newIdle) => {
 <template>
   <div
     v-if="show"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+    class="forecast-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/80"
     @click.stop.prevent="handleOverlayClick"
     @mousedown.stop
     @mouseup.stop
@@ -146,21 +146,23 @@ watch(idle, (newIdle) => {
     @touchend.stop
   >
     <div
-      class="max-h-[80vh] flex flex-col relative bg-neutral-950 rounded-3xl max-w-2xl w-full mx-4 border border-white/20"
+      class="forecast-modal max-h-[80vh] flex flex-col relative bg-neutral-950 rounded-3xl max-w-2xl w-full mx-4 border border-white/20 cursor-pointer"
+      title="单击关闭"
+      @click="handleClose"
     >
       <div v-if="!isIpadIOS15OrLower()" class="absolute inset-20 bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
 
       <!-- 标题 -->
-      <div class="px-8 pt-8 pb-6 flex items-center justify-between space-x-4">
-        <h2 class="text-3xl font-bold text-white flex items-center space-x-2">
+      <div class="forecast-header px-8 pt-8 pb-6 flex items-center justify-between space-x-4">
+        <h2 class="forecast-title text-3xl font-bold text-white flex items-center space-x-2">
           <span>{{ t('weather.fiveDayForecast') }}</span>
           <span class="text-white/40">·</span>
           <span class="text-white/60 text-2xl">{{ locationText }}</span>
         </h2>
-        <div class="flex items-center space-x-2">
+        <div class="forecast-actions flex items-center space-x-2">
           <button
             class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300"
-            @click="openSettings"
+            @click.stop="openSettings"
           >
             <Settings class="w-5 h-5 text-white" />
           </button>
@@ -168,7 +170,7 @@ watch(idle, (newIdle) => {
             class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300"
             :class="{ 'opacity-60 pointer-events-none': loading }"
             :disabled="loading"
-            @click="refreshForecast"
+            @click.stop="refreshForecast"
           >
             <RefreshCw class="w-5 h-5 text-white" :class="{ 'animate-spin': loading }" />
           </button>
@@ -176,13 +178,13 @@ watch(idle, (newIdle) => {
       </div>
 
       <!-- 天气列表 -->
-      <div class="px-8 pb-8 overflow-y-auto">
+      <div class="forecast-list px-8 pb-8 overflow-y-auto">
         <!-- 骨架屏 -->
         <div v-if="isLoading" class="space-y-3">
           <div
             v-for="i in 5"
             :key="`skeleton-${i}`"
-            class="flex items-center justify-between space-x-6 py-2 px-6 rounded-2xl bg-white/5"
+            class="forecast-row forecast-skeleton flex items-center justify-between space-x-6 py-2 px-6 rounded-2xl bg-white/5"
           >
             <!-- 左侧骨架 -->
             <div class="flex items-center space-x-4 flex-1">
@@ -218,18 +220,18 @@ watch(idle, (newIdle) => {
           <div
             v-for="(day, index) in forecastDays"
             :key="index"
-            class="flex items-center justify-between space-x-6 py-2 px-6 rounded-2xl bg-white/5"
+            class="forecast-row flex items-center justify-between space-x-6 py-2 px-6 rounded-2xl bg-white/5"
           >
             <!-- 左侧：日期、天气、降雨 -->
-            <div class="flex items-center space-x-4 flex-1">
+            <div class="forecast-left flex items-center space-x-4 flex-1">
               <!-- 日期 -->
-              <div class="flex flex-col items-start w-[100px]">
+              <div class="forecast-date flex flex-col items-start w-[100px]">
                 <span class="text-xl font-semibold text-white">{{ day.dayName }}</span>
                 <span class="text-sm text-white/60">{{ day.dateText }}</span>
               </div>
 
               <!-- 天气图标和描述 -->
-              <div class="flex flex-col space-y-2 flex-1">
+              <div class="forecast-weather flex flex-col space-y-2 flex-1">
                 <div class="flex items-center space-x-3">
                   <img
                     :src="day.weatherInfo.icon"
@@ -247,11 +249,11 @@ watch(idle, (newIdle) => {
             </div>
 
             <!-- 右侧：温度区间条 -->
-            <div class="flex items-center space-x-3 min-w-[240px]">
+            <div class="forecast-temperature flex items-center space-x-3 min-w-[240px]">
               <span class="text-lg font-medium text-blue-300 tabular-nums w-10 text-right">{{ day.tempMin }}°</span>
 
               <!-- 温度区间条 -->
-              <div class="relative flex-1 h-2 bg-white/10 rounded-full">
+              <div class="temperature-bar relative flex-1 h-2 bg-white/10 rounded-full">
                 <div
                   class="absolute h-full bg-gradient-to-r from-blue-400 to-orange-400 rounded-full transition-all duration-500"
                   :style="{
@@ -274,3 +276,158 @@ watch(idle, (newIdle) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+@media (max-width: 480px) and (orientation: portrait) {
+  .forecast-overlay {
+    padding: 0.5rem;
+  }
+
+  .forecast-modal {
+    width: 100%;
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+    margin: 0;
+    border-radius: 1.25rem;
+    overflow: hidden;
+  }
+
+  .forecast-header {
+    flex: 0 0 auto;
+    gap: 0.5rem;
+    padding: 1rem 0.85rem 0.75rem;
+  }
+
+  .forecast-header.space-x-4 > :not([hidden]) ~ :not([hidden]),
+  .forecast-title.space-x-2 > :not([hidden]) ~ :not([hidden]),
+  .forecast-actions.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0;
+  }
+
+  .forecast-title {
+    min-width: 0;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    font-size: clamp(1rem, 5vw, 1.3rem);
+    line-height: 1.25;
+  }
+
+  .forecast-title > span:nth-child(2) {
+    display: none;
+  }
+
+  .forecast-title > span:last-child {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: clamp(0.72rem, 3.3vw, 0.9rem);
+  }
+
+  .forecast-actions {
+    flex: none;
+    gap: 0.35rem;
+  }
+
+  .forecast-actions button {
+    padding: 0.5rem;
+  }
+
+  .forecast-actions svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .forecast-list {
+    min-height: 0;
+    padding: 0 0.55rem 0.65rem;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .forecast-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .forecast-row:not(.forecast-skeleton) {
+    display: grid;
+    grid-template-columns: minmax(3.2rem, auto) minmax(0, 1fr) auto;
+    gap: 0.45rem;
+    min-width: 0;
+    padding: 0.65rem 0.55rem;
+    border-radius: 0.9rem;
+  }
+
+  .forecast-row.space-x-6 > :not([hidden]) ~ :not([hidden]),
+  .forecast-left.space-x-4 > :not([hidden]) ~ :not([hidden]),
+  .forecast-temperature.space-x-3 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0;
+  }
+
+  .forecast-left {
+    display: contents;
+  }
+
+  .forecast-date {
+    width: auto;
+    min-width: 0;
+  }
+
+  .forecast-date span:first-child {
+    font-size: clamp(0.82rem, 3.8vw, 1rem);
+  }
+
+  .forecast-date span:last-child {
+    font-size: clamp(0.65rem, 2.8vw, 0.78rem);
+  }
+
+  .forecast-weather {
+    min-width: 0;
+  }
+
+  .forecast-weather > div {
+    gap: 0.35rem;
+  }
+
+  .forecast-weather img {
+    width: 2.3rem;
+    height: 2.3rem;
+  }
+
+  .forecast-weather span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: clamp(0.75rem, 3.4vw, 0.9rem);
+  }
+
+  .forecast-weather span:last-child {
+    font-size: clamp(0.62rem, 2.7vw, 0.75rem);
+  }
+
+  .forecast-temperature {
+    min-width: 0;
+    gap: 0.25rem;
+  }
+
+  .forecast-temperature > span {
+    width: auto;
+    font-size: clamp(0.78rem, 3.6vw, 0.95rem);
+  }
+
+  .temperature-bar {
+    display: none;
+  }
+
+  .forecast-skeleton {
+    min-width: 0;
+    overflow: hidden;
+    padding: 0.6rem;
+  }
+
+  .forecast-skeleton > div:last-child {
+    display: none;
+  }
+}
+</style>
