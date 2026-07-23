@@ -172,8 +172,8 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
           </div>
         </div>
       </div>
-      <div class="flex space-x-4 items-center">
-        <div v-if="connectErrorText" class="flex items-center space-x-2">
+      <div class="smart-home-actions flex space-x-4 items-center">
+        <div v-if="connectErrorText" class="smart-home-error flex items-center space-x-2">
           <AlertTriangle class="w-[4vh] h-[4vh] text-red-400" />
           <span class="text-red-400 text-[4vh]">{{ connectErrorText }}</span>
         </div>
@@ -234,7 +234,7 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
       </div>
     </div>
 
-    <div v-else class="col-span-full text-center py-20 opacity-50">
+    <div v-else class="smart-home-empty col-span-full text-center py-20 opacity-50">
       <p>{{ t('smartHome.setupTip') }}</p>
     </div>
   </div>
@@ -306,6 +306,42 @@ watch([() => haConfig.value.url, () => haConfig.value.token], () => {
   .smart-home-settings svg {
     width: 1.35rem;
     height: 1.35rem;
+  }
+
+  .smart-home-actions {
+    min-width: 0;
+    gap: 0.4rem;
+  }
+
+  .smart-home-actions.space-x-4 > :not([hidden]) ~ :not([hidden]),
+  .smart-home-error.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0;
+  }
+
+  .smart-home-error {
+    min-width: 0;
+    max-width: 8.5rem;
+    gap: 0.3rem;
+  }
+
+  .smart-home-error svg {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+  }
+
+  .smart-home-error span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: clamp(0.68rem, 3vw, 0.82rem);
+    line-height: 1.2;
+  }
+
+  .smart-home-empty {
+    padding: 3rem 1rem;
+    font-size: clamp(0.8rem, 3.7vw, 1rem);
+    line-height: 1.6;
   }
 
   #ha-entities {

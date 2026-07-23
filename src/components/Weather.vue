@@ -334,10 +334,14 @@ onUnmounted(() => {
 /* 折叠屏外屏：天气两行保持完整，并随宽高共同缩放。 */
 @media (max-width: 420px) and (orientation: portrait) {
   #weather-container {
-    height: 100%;
+    width: 100%;
+    height: 30%;
+    flex: 0 0 30%;
+    min-height: 0;
+    overflow: visible;
     padding: 0 0.35rem;
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-    grid-template-rows: minmax(0, 58fr) minmax(0, 42fr);
+    grid-template-rows: minmax(0, 52fr) minmax(0, 48fr);
     gap: 0 0.35rem;
     align-content: stretch;
   }
@@ -376,7 +380,12 @@ onUnmounted(() => {
   }
 
   .environment-data {
+    grid-column: 1 / -1;
+    grid-row: 2;
     align-self: center;
+    justify-self: stretch;
+    justify-content: center;
+    min-height: 0;
     gap: 0.25rem;
     font-size: clamp(0.82rem, 4vw, 1rem);
   }

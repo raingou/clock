@@ -316,8 +316,8 @@ watch(idle, (newIdle) => {
 /* Z Fold 外屏等特别窄的屏幕 */
 @media (max-width: 420px) and (orientation: portrait) {
   .glass-panel {
-    display: grid;
-    grid-template-rows: minmax(0, 27fr) minmax(0, 43fr) minmax(0, 30fr);
+    display: flex;
+    flex-direction: column;
     align-items: center;
     width: 100%;
     height: 100%;
@@ -328,7 +328,10 @@ watch(idle, (newIdle) => {
   }
 
   .date-header {
+    height: 27%;
+    flex: 0 0 27%;
     align-self: center;
+    justify-content: center;
     padding: 0;
   }
 
@@ -364,6 +367,8 @@ watch(idle, (newIdle) => {
 
   .clock-display,
   .clock-only-mode .clock-display {
+    height: 43%;
+    flex: 0 0 43%;
     align-self: center;
     margin: 0;
     font-size: min(28vh, 34vw);
@@ -372,10 +377,6 @@ watch(idle, (newIdle) => {
   .clock-display.with-seconds,
   .clock-only-mode .clock-display.with-seconds {
     font-size: min(22vh, 23vw);
-  }
-
-  .glass-panel > :deep(#weather-container) {
-    align-self: stretch;
   }
 
   .glass-panel > button {
