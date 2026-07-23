@@ -42,10 +42,14 @@ const showLunar = computed(() => locale.value !== 'en-US')
     <div class="absolute inset-0 bg-black/80" @click="$emit('close')" />
 
     <!-- 弹窗内容 -->
-    <div class="relative w-full max-w-xl bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden py-6">
+    <div
+      class="relative w-full max-w-xl bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden py-6 cursor-pointer"
+      title="单击关闭"
+      @click="$emit('close')"
+    >
       <button
         class="p-3 hover:bg-white/10 rounded-full transition-colors absolute top-2 right-2"
-        @click="$emit('close')"
+        @click.stop="$emit('close')"
       >
         <X class="w-6 h-6" />
       </button>
