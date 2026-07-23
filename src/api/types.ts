@@ -1,4 +1,5 @@
 export interface WeatherApiResponse {
+  provider?: 'visual-crossing' | 'open-meteo'
   current: {
     temperature_2m: number
     rain: number
