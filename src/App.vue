@@ -49,6 +49,7 @@ const shouldShowWeatherEffects = computed(() => {
 })
 
 let startX = 0
+let startY = 0
 
 function goToPage(page: number) {
   currentPage.value = page
@@ -61,39 +62,44 @@ function goToPage(page: number) {
 
 function handleTouchStart(e: TouchEvent) {
   startX = e.touches[0].clientX
+  startY = e.touches[0].clientY
 }
 
 function handleTouchEnd(e: TouchEvent) {
   const endX = e.changedTouches[0].clientX
-  const diff = startX - endX
-  if (Math.abs(diff) > 50) {
+  const endY = e.changedTouches[0].clientY
+  const diffX = startX - endX
+  const diffY = startY - endY
+  if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
     isSwiping.value = true
     setTimeout(() => {
       isSwiping.value = false
     }, 50)
 
-    if (diff > 0 && currentPage.value < 2)
+    if (diffX > 0 && currentPage.value < 2)
       goToPage(currentPage.value + 1)
-    else if (diff < 0 && currentPage.value > 0)
+    else if (diffX < 0 && currentPage.value > 0)
       goToPage(currentPage.value - 1)
   }
 }
 
 function handleMouseDown(e: MouseEvent) {
   startX = e.clientX
+  startY = e.clientY
 }
 
 function handleMouseUp(e: MouseEvent) {
-  const diff = startX - e.clientX
-  if (Math.abs(diff) > 50) {
+  const diffX = startX - e.clientX
+  const diffY = startY - e.clientY
+  if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
     isSwiping.value = true
     setTimeout(() => {
       isSwiping.value = false
     }, 50)
 
-    if (diff > 0 && currentPage.value < 2)
+    if (diffX > 0 && currentPage.value < 2)
       goToPage(currentPage.value + 1)
-    else if (diff < 0 && currentPage.value > 0)
+    else if (diffX < 0 && currentPage.value > 0)
       goToPage(currentPage.value - 1)
   }
 }

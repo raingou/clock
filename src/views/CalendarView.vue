@@ -22,8 +22,13 @@ const showSettingsButton = ref(true)
 const showDesktopMonthPicker = ref(false)
 const desktopMonthPickerRef = ref<HTMLElement | null>(null)
 const pickerYear = ref(currentMonthDate.value.getFullYear())
+const monthTransitionDirection = ref<'up' | 'down'>('up')
 const { idle } = useIdle(5 * 1000)
 let holidayRequestId = 0
+let calendarTouchStartX = 0
+let calendarTouchStartY = 0
+let monthSwipeLockedUntil = 0
+let suppressDayClickUntil = 0
 
 watch(idle, (isIdle) => {
   showSettingsButton.value = !isIdle
@@ -130,7 +135,7 @@ const monthPickerValue = computed({
     const selectedYear = Number(match[1])
     const selectedMonth = Number(match[2])
     if (selectedYear < 1900 || selectedYear > 2100 || selectedMonth < 1 || selectedMonth > 12) return
-    currentMonthDate.value = new Date(selectedYear, selectedMonth - 1, 1)
+    setCurrentMonth(new Date(selectedYear, selectedMonth - 1, 1))
   },
 })
 
@@ -151,7 +156,7 @@ function changePickerYear(delta: number) {
 function selectDesktopMonth(selectedMonth: number) {
   const selectedYear = Number.isFinite(pickerYear.value) ? Math.round(pickerYear.value) : year.value
   pickerYear.value = Math.min(2100, Math.max(1900, selectedYear))
-  currentMonthDate.value = new Date(pickerYear.value, selectedMonth, 1)
+  setCurrentMonth(new Date(pickerYear.value, selectedMonth, 1))
   showDesktopMonthPicker.value = false
 }
 
@@ -218,13 +223,41 @@ function getAnniversaries(date: Date, lunar: LunarInfo) {
   })
 }
 
+function setCurrentMonth(nextDate: Date) {
+  const currentIndex = currentMonthDate.value.getFullYear() * 12 + currentMonthDate.value.getMonth()
+  const nextIndex = nextDate.getFullYear() * 12 + nextDate.getMonth()
+  monthTransitionDirection.value = nextIndex < currentIndex ? 'down' : 'up'
+  currentMonthDate.value = nextDate
+}
+
 function changeMonth(delta: number) {
   const d = new Date(currentMonthDate.value)
   d.setMonth(d.getMonth() + delta)
-  currentMonthDate.value = d
+  setCurrentMonth(d)
+}
+
+function handleCalendarTouchStart(event: TouchEvent) {
+  if (selectedDay.value || showDrawer.value || showDesktopMonthPicker.value) return
+  calendarTouchStartX = event.touches[0].clientX
+  calendarTouchStartY = event.touches[0].clientY
+}
+
+function handleCalendarTouchEnd(event: TouchEvent) {
+  if (selectedDay.value || showDrawer.value || showDesktopMonthPicker.value || Date.now() < monthSwipeLockedUntil) return
+
+  const diffX = calendarTouchStartX - event.changedTouches[0].clientX
+  const diffY = calendarTouchStartY - event.changedTouches[0].clientY
+  const isVerticalSwipe = Math.abs(diffY) >= 55 && Math.abs(diffY) > Math.abs(diffX) * 1.2
+  if (!isVerticalSwipe) return
+
+  event.preventDefault()
+  monthSwipeLockedUntil = Date.now() + 280
+  suppressDayClickUntil = Date.now() + 350
+  changeMonth(diffY > 0 ? 1 : -1)
 }
 
 function handleDayClick(day: any) {
+  if (Date.now() < suppressDayClickUntil) return
   if (!showLunar.value) return
   selectedDay.value = {
     ...day,
@@ -237,7 +270,7 @@ function handleDayClick(day: any) {
 
 function goToToday() {
   today.value = new Date()
-  currentMonthDate.value = new Date()
+  setCurrentMonth(new Date())
 }
 
 function refreshToday() {
@@ -344,42 +377,48 @@ defineExpose({ refreshToday })
       </div>
     </div>
 
-    <div class="h-[calc(100vh-13.5vh)] flex flex-col w-full">
+    <div
+      class="calendar-swipe-area h-[calc(100vh-13.5vh)] flex flex-col w-full"
+      @touchstart="handleCalendarTouchStart"
+      @touchend="handleCalendarTouchEnd"
+    >
       <div class="grid grid-cols-7 mb-2">
         <div v-for="d in weekHeaders" :key="d" class="calendar-header-day text-[2.6vh] leading-none font-bold">
           {{ d }}
         </div>
       </div>
-      <div class="calendar-grid">
-        <div
-          v-for="(day, index) in calendarDays"
-          :key="index"
-          class="calendar-day cursor-pointer hover:bg-white/10 active:scale-95 transition-all duration-200"
-          :class="{ 'other-month': day.isOtherMonth, 'today': day.isToday }"
-          @click="handleDayClick(day)"
-        >
-          <div class="day-number-wrapper flex flex-col items-center justify-center overflow-hidden px-2">
-            <span class="text-[4vh] leading-none font-bold">{{ day.date.getDate() }}</span>
-            <div v-if="showLunar || day.holidays.length" class="lunar-text text-[1.9vh] leading-none font-normal mt-[1vh] text-center line-clamp-1" :title="day.holidays.map(item => `${item.code}·${item.name}`).join(' / ')">
-              <span v-if="day.anniversaries.length" class="text-pink-300 opacity-100 font-medium">
-                {{ day.anniversaries.map(item => item.name).join('、') }}
-              </span>
-              <span
-                v-else-if="showLunar"
-                :class="day.lunar.isFestival ? 'text-blue-300 opacity-100' : 'opacity-60'"
-              >
-                {{ day.lunar.festival || (day.lunar.date === '初一' ? `${day.lunar.month}月` : day.lunar.date) }}
-              </span>
-              <template v-if="day.holidays.length">
-                <span class="opacity-60"> · </span>
-                <span class="text-red-300">
-                  {{ day.holidays.map(item => `${item.code}·${item.name}`).join(' / ') }}
+      <Transition :name="monthTransitionDirection === 'down' ? 'month-slide-down' : 'month-slide-up'" mode="out-in">
+        <div :key="monthPickerValue" class="calendar-grid">
+          <div
+            v-for="(day, index) in calendarDays"
+            :key="index"
+            class="calendar-day cursor-pointer hover:bg-white/10 active:scale-95 transition-all duration-200"
+            :class="{ 'other-month': day.isOtherMonth, 'today': day.isToday }"
+            @click="handleDayClick(day)"
+          >
+            <div class="day-number-wrapper flex flex-col items-center justify-center overflow-hidden px-2">
+              <span class="text-[4vh] leading-none font-bold">{{ day.date.getDate() }}</span>
+              <div v-if="showLunar || day.holidays.length" class="lunar-text text-[1.9vh] leading-none font-normal mt-[1vh] text-center line-clamp-1" :title="day.holidays.map(item => `${item.code}·${item.name}`).join(' / ')">
+                <span v-if="day.anniversaries.length" class="text-pink-300 opacity-100 font-medium">
+                  {{ day.anniversaries.map(item => item.name).join('、') }}
                 </span>
-              </template>
+                <span
+                  v-else-if="showLunar"
+                  :class="day.lunar.isFestival ? 'text-blue-300 opacity-100' : 'opacity-60'"
+                >
+                  {{ day.lunar.festival || (day.lunar.date === '初一' ? `${day.lunar.month}月` : day.lunar.date) }}
+                </span>
+                <template v-if="day.holidays.length">
+                  <span class="opacity-60"> · </span>
+                  <span class="text-red-300">
+                    {{ day.holidays.map(item => `${item.code}·${item.name}`).join(' / ') }}
+                  </span>
+                </template>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Transition>
     </div>
   </div>
 
@@ -449,6 +488,29 @@ defineExpose({ refreshToday })
   gap: 4px;
   flex: 1;
   overflow: hidden;
+}
+
+.calendar-swipe-area {
+  touch-action: none;
+}
+
+.month-slide-up-enter-active,
+.month-slide-up-leave-active,
+.month-slide-down-enter-active,
+.month-slide-down-leave-active {
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.month-slide-up-enter-from,
+.month-slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(3vh);
+}
+
+.month-slide-up-leave-to,
+.month-slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-3vh);
 }
 
 .calendar-day {
