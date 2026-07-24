@@ -89,11 +89,11 @@ onUnmounted(() => {
 
     <!-- 环境数据 -->
     <div class="environment-data flex justify-end items-center text-white tabular-nums">
-      <div class="flex flex-col mr-[2vh]">
+      <div class="environment-column environment-column-primary flex flex-col">
         <!-- 湿度 -->
         <div id="humidity-val" class="flex flex-row items-center justify-end">
           <span>
-            {{ weatherData ? weatherData.current.relative_humidity_2m : '--' }}%
+            {{ weatherData ? Math.round(weatherData.current.relative_humidity_2m) : '--' }}%
           </span>
           <Droplets class="environment-data-icon text-blue-500/60 flex-shrink-0 ml-1" />
         </div>
@@ -190,6 +190,12 @@ onUnmounted(() => {
 .environment-data {
   font-size: 4vh;
   line-height: 1.1;
+  min-width: 0;
+  gap: 2vh;
+}
+
+.environment-column {
+  min-width: 0;
 }
 
 .environment-data-icon {
@@ -212,8 +218,8 @@ onUnmounted(() => {
   #weather-container {
     padding: 0 clamp(1rem, 3vmin, 3rem);
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) auto minmax(0, 1fr);
-    gap: clamp(1rem, 3vmin, 3rem);
+    grid-template-columns: minmax(0, 1.3fr) auto minmax(0, 0.9fr);
+    gap: clamp(0.5rem, 1.5vmin, 1.5rem);
     align-items: center;
   }
 
@@ -230,7 +236,8 @@ onUnmounted(() => {
   .environment-data {
     grid-column: auto;
     justify-content: flex-end;
-    font-size: clamp(1.25rem, 2.8vmin, 2.5rem);
+    gap: clamp(0.35rem, 1vmin, 0.8rem);
+    font-size: clamp(1rem, 2.35vmin, 2rem);
   }
 
   #weather-icon {
@@ -243,7 +250,7 @@ onUnmounted(() => {
   }
 
   #location-text {
-    max-width: 34vw;
+    max-width: 31vw;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: clamp(0.7rem, 1.55vmin, 1.35rem);
@@ -264,12 +271,12 @@ onUnmounted(() => {
   }
 
   .environment-data-icon {
-    width: clamp(1.25rem, 2.8vmin, 2.5rem);
-    height: clamp(1.25rem, 2.8vmin, 2.5rem);
+    width: clamp(1rem, 2.35vmin, 2rem);
+    height: clamp(1rem, 2.35vmin, 2rem);
   }
 
   #aqi-label {
-    font-size: clamp(0.7rem, 1.4vmin, 1.2rem);
+    font-size: clamp(0.6rem, 1.15vmin, 1rem);
   }
 }
 
@@ -298,6 +305,7 @@ onUnmounted(() => {
   .environment-data {
     grid-column: 1 / -1;
     justify-content: center;
+    gap: clamp(0.5rem, 3vw, 1rem);
     font-size: clamp(1rem, 5vw, 1.6rem);
   }
 
